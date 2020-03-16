@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+	<title>COVID-19 Slovensko</title>
+	<script src="Chart.bundle.min.js"></script>
+  <script src="data.js"></script>
+	<script src="data/slovakia.js"></script>
+	<script src="data/hungary.js"></script>
+	<script src="data/austria.js"></script>
+	<script src="data/czechia.js"></script>
+	<script src="data/poland.js"></script>
+	<script src="data/spain.js"></script>
+	<script src="data/germany.js"></script>
+	<script src="data/italy.js"></script>
+	<style>
+	canvas{
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
+</head>
+
+<body>
+	<a href="https://github.com/qsmd/covid19slovakia" class="github-corner" aria-label="View source on Github">
+		<svg width="80" height="80" viewBox="0 0 250 250" style="fill:#0080ec; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true">
+				<path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+				<path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+				<path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path>
+		</svg>
+	</a>
+
+	<div style="width:75%;">
+		<div style="padding: 1em;">
+			<h1 style="text-align: center;">COVID-19 na Slovensku: porovnanie s inými krajinami</h1>
+			<div style="padding: 1em; background-color: yellow;">
+				<p style="margin-left: 3em; margin-right: 3em;">
+					<b>Upozornenie:</b> Táto stránka nezobrazuje oficiálne štatistiky. Ide o amatérsky pohľad na verejne dostupné dáta.
+					Porovnáva vývoj v krajinách, keby mali rovnakú veľkosť a bod zlomu.
+					Bod zlomu je pre účely tejto stránky zvolený ako moment, kedy krajina dosiahne aspoň 2 pozitívne prípady na 5 435 343 obyvateľov.
+				</p>
+				<p style="margin-left: 3em; margin-right: 3em;">
+						Tento pohľad môže byť zavádzajúci, irelevantný a výpočty môžu byť chybné. Nezdieľajte. Vytvorte si vlastné alebo <a href="https://github.com/qsmd/covid19slovakia/issues">navrhnite úpravy</a>.
+				</p>
+			</div>
+		</div>
+
+		<div style="padding: 2em">
+			<hr>
+			<h2 style="text-align: center">Slovensko a susedia celkovo</h2>
+			<canvas id="canvas-total"></canvas>
+		</div>
+
+		<div style="padding: 2em">
+			<hr>
+			<h2 style="text-align: center">Slovensko a susedia denne</h2>
+			<canvas id="canvas-daily"></canvas>
+		</div>
+
+		<div style="padding: 2em">
+			<hr>
+			<h2 style="text-align: center">Slovensko a vybrané krajiny celkovo</h2>
+			<canvas id="canvas-other-total"></canvas>
+		</div>
+
+		<div style="padding: 2em">
+			<hr>
+			<h2 style="text-align: center">Slovensko a vybrané krajiny denne</h2>
+			<canvas id="canvas-other-daily"></canvas>
+		</div>
+		
+		<div style="padding: 2em; text-align: center;">
+			<p>Zdroj dát: <a href="https://www.who.int/emergencies/diseases/novel-coronavirus-2019/situation-reports/">WHO Situation Reports</a>. Slovensko je navyše aktualizované na konci dňa z médií.</p>
+			<p>Zdrojový kód: <a href="https://github.com/qsmd/covid19slovakia">github.com/qsmd/covid19slovakia</a>.</p>
+		</div>
+
+	</div>
+	<script>
+		window.onload = function() {
+			const SLOVAK_POPULATION = 5435343;
+			const DAYS_NEIGHBORS = 18;
+			const DAYS_OTHER = 23;
+			const DAILY = true;
+
+			window.lineTotal = new Chart(
+				document.getElementById('canvas-total').getContext('2d'),
+				createConfig(!DAILY, NEIGHBOR_COUNTRIES, SLOVAK_POPULATION, DAYS_NEIGHBORS, 2,
+					'Vývoj celkového počtu prípadov ak by susedné krajiny mali rovnaký počet obyvateľov ako Slovensko.')
+				);
+
+			window.lineDaily = new Chart(
+				document.getElementById('canvas-daily').getContext('2d'),
+				createConfig(DAILY, NEIGHBOR_COUNTRIES, SLOVAK_POPULATION, DAYS_NEIGHBORS, 2,
+				'Vývoj denného počtu prípadov ak by susedné krajiny mali rovnaký počet obyvateľov ako Slovensko.')
+				);
+
+				window.lineOtherTotal = new Chart(
+				document.getElementById('canvas-other-total').getContext('2d'),
+				createConfig(!DAILY, OTHER_COUNTRIES, SLOVAK_POPULATION, DAYS_OTHER, 2,
+					'Vývoj celkového počtu prípadov ak by vybrané krajiny mali rovnaký počet obyvateľov ako Slovensko.')
+				);
+
+			window.lineOtherDaily = new Chart(
+				document.getElementById('canvas-other-daily').getContext('2d'),
+				createConfig(DAILY, OTHER_COUNTRIES, SLOVAK_POPULATION, DAYS_OTHER, 2,
+				'Vývoj denného počtu prípadov ak by vybrané krajiny mali rovnaký počet obyvateľov ako Slovensko.')
+				);
+				
+			};
+	</script>
+</body>
+
+</html>
