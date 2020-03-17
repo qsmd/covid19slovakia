@@ -14,6 +14,7 @@ const SLOVAKIA = {
     '15.3.2020': 44,
     '16.3.2020': 61,
     '17.3.2020': 72,
+    '18.3.2020': 97,
   }
 }
 NEIGHBOR_COUNTRIES.push(SLOVAKIA);
