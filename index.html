@@ -46,7 +46,7 @@
 						Nezdieľajte. Vytvorte si vlastné alebo <a href="https://github.com/qsmd/covid19slovakia/issues">navrhnite úpravy</a>.
 				</p>
 			</div>
-			<p style="text-align: center;">Dáta aktualizované 19.3.2020 16:05.</p>
+			<p style="text-align: center;">Dáta aktualizované 19.3.2020 22:30.</p>
 		</div>
 
 		<div>
@@ -89,26 +89,26 @@
 
 			window.lineTotal = new Chart(
 				document.getElementById('canvas-total').getContext('2d'),
-				createConfig(!DAILY, NEIGHBOR_COUNTRIES, SLOVAK_POPULATION, DAYS_NEIGHBORS, 2,
-					'Vývoj celkového počtu prípadov ak by susedné krajiny mali rovnaký počet obyvateľov ako Slovensko.')
+				createConfig(!DAILY, true, NEIGHBOR_COUNTRIES, SLOVAK_POPULATION, DAYS_NEIGHBORS, 2,
+					'Celkový vývoj ak by susedné krajiny mali rovnaký počet obyvateľov ako Slovensko.')
 				);
 
 			window.lineDaily = new Chart(
 				document.getElementById('canvas-daily').getContext('2d'),
-				createConfig(DAILY, NEIGHBOR_COUNTRIES, SLOVAK_POPULATION, DAYS_NEIGHBORS, 2,
-				'Vývoj denného počtu prípadov ak by susedné krajiny mali rovnaký počet obyvateľov ako Slovensko.')
+				createConfig(DAILY, true, NEIGHBOR_COUNTRIES, SLOVAK_POPULATION, DAYS_NEIGHBORS, 2,
+				'Denný vývoj ak by susedné krajiny mali rovnaký počet obyvateľov ako Slovensko.')
 				);
 
-				window.lineOtherTotal = new Chart(
+			window.lineOtherTotal = new Chart(
 				document.getElementById('canvas-other-total').getContext('2d'),
-				createConfig(!DAILY, OTHER_COUNTRIES, SLOVAK_POPULATION, DAYS_OTHER, 2,
-					'Vývoj celkového počtu prípadov ak by vybrané krajiny mali rovnaký počet obyvateľov ako Slovensko.')
+				createConfig(!DAILY, false, OTHER_COUNTRIES, SLOVAK_POPULATION, DAYS_OTHER, 2,
+					'Celkový vývoj ak by vybrané krajiny mali rovnaký počet obyvateľov ako Slovensko.')
 				);
 
 			window.lineOtherDaily = new Chart(
 				document.getElementById('canvas-other-daily').getContext('2d'),
-				createConfig(DAILY, OTHER_COUNTRIES, SLOVAK_POPULATION, DAYS_OTHER, 2,
-				'Vývoj denného počtu prípadov ak by vybrané krajiny mali rovnaký počet obyvateľov ako Slovensko.')
+				createConfig(DAILY, false, OTHER_COUNTRIES, SLOVAK_POPULATION, DAYS_OTHER, 2,
+				'Denný vývoj ak by vybrané krajiny mali rovnaký počet obyvateľov ako Slovensko.')
 				);
 				
 			};

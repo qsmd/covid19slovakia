@@ -14,36 +14,55 @@ window.chartColors = {
 	grey: 'rgb(201, 203, 207)'
 };
 
-function filterDataset(daily, country, population, maxDays, minimumCases) {
+function getDatasets(daily, country, population, maxDays, minimumCases) {
 	let multiplier = population / country.population;
-	let dataset = [];
+	let datasets = {'cases': [], 'tests': []};
 	let applicableDays = 0;
-	let lastTotal = 0;
+	let lastTotalCases = 0;
+	let lastTotalTests = 0;
 
-	for (const date in country.data) {
-		let relativeCasesDailyOrTotal = ((country.data[date] - lastTotal) * multiplier).toFixed(2);
-		let relativeCasesTotal = (country.data[date] * multiplier).toFixed(2);
+	country.data.forEach(day => {
+		let relativeCasesDailyOrTotal = ((day[1] - lastTotalCases) * multiplier).toFixed(2);
+		let relativeCasesTotal = (day[1] * multiplier).toFixed(2);
+		let relativeTestsDailyOrTotal = ((day[2] - lastTotalTests) * multiplier).toFixed(2);
 		if (maxDays > applicableDays && relativeCasesTotal >= minimumCases) {
 			applicableDays++;
 			if (daily) {
-				lastTotal = country.data[date];
+				lastTotalCases = day[1];
+				lastTotalTests = day[2];
 			}
-			dataset.push(relativeCasesDailyOrTotal);
+			datasets.cases.push(relativeCasesDailyOrTotal);
+			if (country.tests) {
+				datasets.tests.push(relativeTestsDailyOrTotal);
+			}
 		}
-	}
-	return dataset;
+	});
+	return datasets;
 }
 
-function createConfig(daily, countries, population, maxDays, minimumCases, title) {
+function createConfig(daily, showTests, countries, population, maxDays, minimumCases, title) {
 	let datasets = [];
 	countries.forEach(country => {
+		let countryDatasets = getDatasets(daily, country, population, maxDays, minimumCases);
 		datasets.push({
 			label: country.name,
 			backgroundColor: country.color,
 			borderColor: country.color,
-			data: filterDataset(daily, country, population, maxDays, minimumCases),
+			data: countryDatasets.cases,
+			yAxisID: 'left-y-axis',
 			fill: false
-		})
+		});
+		if (showTests && country.tests) {
+			let testsColor = country.color.replace('rgb', 'rgba').replace(')', ',0.1');
+			datasets.push({
+				label: country.name + ' testy',
+				backgroundColor: testsColor,
+				borderColor: testsColor,
+				data: countryDatasets.tests,
+				yAxisID: 'right-y-axis',
+				fill: true
+			});
+		}
 	});
 
 	return {
@@ -56,7 +75,12 @@ function createConfig(daily, countries, population, maxDays, minimumCases, title
 			hover: { mode: 'nearest', intersect: true },
 			scales: {
 				xAxes: [{ display: true, scaleLabel: { display: true, labelString: 'Dni od bodu zlomu (aspoň 2 prípady / počet obyvateľov Slovenska)' } }],
-				yAxes: [{ display: true, scaleLabel: { display: true, labelString: 'Celkový počet prípadov / počet obyvateľov Slovenska' }}]
+				yAxes: [
+					{ id: 'left-y-axis', display: true, position: 'left', scaleLabel: { 
+						display: true, labelString: (daily ? 'Denný' : 'Celkový') + ' počet prípadov / počet obyvateľov Slovenska' }},
+					{ id: 'right-y-axis', display: true, position: 'right', scaleLabel: { 
+						display: true, labelString: (daily ? 'Denný' : 'Celkový') + ' počet testov / počet obyvateľov Slovenska' }},
+				]
 			}
 		}
 	};
