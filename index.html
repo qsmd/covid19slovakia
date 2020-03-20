@@ -57,27 +57,31 @@
 			<p style="text-align: center;">Dáta aktualizované 20.3.2020 9:25</p>
 		</div>
 
-		<div id="neighbor-total">
+		<div id="neighbor-total" style="text-align: center">
 			<hr>
-			<h2 style="text-align: center">Slovensko a susedia celkovo</h2>
+			<h2>Slovensko a susedia celkovo | <a id="download-neighbor-total" href=""
+					download="slovensko-susedia-celkovo.png">Stiahnuť</a></h2>
 			<canvas id="canvas-total"></canvas>
 		</div>
-
-		<div id="neighbor-daily">
+		
+		<div id="neighbor-daily" style="text-align: center">
 			<hr>
-			<h2 style="text-align: center">Slovensko a susedia denne</h2>
+			<h2>Slovensko a susedia denne | <a id="download-neighbor-daily" href=""
+					download="slovensko-susedia-denne.png">Stiahnuť</a></h2>
 			<canvas id="canvas-daily"></canvas>
 		</div>
-
-		<div id="other-total">
+		
+		<div id="other-total" style="text-align: center">
 			<hr>
-			<h2 style="text-align: center">Slovensko a vybrané krajiny celkovo</h2>
+			<h2>Slovensko a vybrané krajiny celkovo | <a id="download-other-total" href=""
+					download="slovensko-vybrane-celkovo.png">Stiahnuť</a></h2>
 			<canvas id="canvas-other-total"></canvas>
 		</div>
-
-		<div id="other-daily">
+		
+		<div id="other-daily" style="text-align: center">
 			<hr>
-			<h2 style="text-align: center">Slovensko a vybrané krajiny denne</h2>
+			<h2>Slovensko a vybrané krajiny denne | <a id="download-other-daily" href=""
+					download="slovensko-vybrane-denne.png">Stiahnuť</a></h2>
 			<canvas id="canvas-other-daily"></canvas>
 		</div>
 
@@ -97,13 +101,13 @@
 			const DAYS_OTHER = 26;
 			const DAILY = true;
 
-			window.lineTotal = new Chart(
+			window.lineNeighborTotal = new Chart(
 				document.getElementById('canvas-total').getContext('2d'),
 				createConfig(!DAILY, true, NEIGHBOR_COUNTRIES, SLOVAK_POPULATION, DAYS_NEIGHBORS, 2,
 					'Celkový vývoj ak by susedné krajiny mali rovnaký počet obyvateľov ako Slovensko.')
 			);
 
-			window.lineDaily = new Chart(
+			window.lineNeighborDaily = new Chart(
 				document.getElementById('canvas-daily').getContext('2d'),
 				createConfig(DAILY, true, NEIGHBOR_COUNTRIES, SLOVAK_POPULATION, DAYS_NEIGHBORS, 2,
 					'Denný vývoj ak by susedné krajiny mali rovnaký počet obyvateľov ako Slovensko.')
@@ -121,6 +125,21 @@
 					'Denný vývoj ak by vybrané krajiny mali rovnaký počet obyvateľov ako Slovensko.')
 			);
 
+			document.getElementById("download-neighbor-total").addEventListener('click', function(event) {
+				event.target.href = window.lineNeighborTotal.toBase64Image();
+			});
+
+			document.getElementById("download-neighbor-daily").addEventListener('click', function(event) {
+				event.target.href = window.lineNeighborDaily.toBase64Image();
+			});
+
+			document.getElementById("download-other-total").addEventListener('click', function(event) {
+				event.target.href = window.lineOtherTotal.toBase64Image();
+			});
+
+			document.getElementById("download-other-daily").addEventListener('click', function(event) {
+				event.target.href = window.lineOtherDaily.toBase64Image();
+			});
 		};
 	</script>
 </body>
