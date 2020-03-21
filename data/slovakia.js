@@ -1,3 +1,6 @@
+// Source: https://virus-korona.sk
+// Date increased by 1 to match WHO reporting.
+
 const SLOVAKIA = {
   name: 'SK',
   population: 5435343,
