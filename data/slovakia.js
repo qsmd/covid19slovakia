@@ -1,4 +1,5 @@
-// Source: https://virus-korona.sk
+// Data source: https://virus-korona.sk
+// Test source: http://www.uvzsr.sk
 // Date increased by 1 to match WHO reporting.
 
 const SLOVAKIA = {
@@ -21,7 +22,7 @@ const SLOVAKIA = {
     ['18.3.2020', 97, 1913],
     ['19.3.2020', 105, 2138],
     ['20.3.2020', 123, 2439],
-    ['21.3.2020', 137, 2670],
+    ['21.3.2020', 137, 2807],
     ['22.3.2020', 178, 3247],
   ]
 }
