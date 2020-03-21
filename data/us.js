@@ -4,5 +4,6 @@ OTHER_COUNTRIES.push({
     color: window.chartColors.purple,
     data: [
         ['19.3.2020', 7087, ],
-    ]
+        ['20.3.2020', 10442, ],
+]
   });
