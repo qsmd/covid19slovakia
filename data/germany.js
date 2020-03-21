@@ -1,7 +1,7 @@
-OTHER_COUNTRIES.push({
+const DE = {
   name: 'DE',
   population: 82521653,
-  color: window.chartColors.red,
+  color: window.chartColors.DE,
   data: [
     ['28.1.2020', 1, ],
     ['29.1.2020', 4, ],
@@ -58,4 +58,5 @@ OTHER_COUNTRIES.push({
     ['20.3.2020', 10999, ],
     ['21.3.2020', 18323, ],
   ]
-});
+};
+NEIGHBOR_COUNTRIES['DE'] = DE;

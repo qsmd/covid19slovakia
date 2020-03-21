@@ -1,7 +1,8 @@
-NEIGHBOR_COUNTRIES.push({
+const AT = {
   name: 'AT',
   population: 8772865,
-  color: window.chartColors.orange,
+  color: window.chartColors.AT,
+  default: true,
   data: [
     ['26.2.2020', 2, ],
     ['27.2.2020', 2, ],
@@ -29,4 +30,5 @@ NEIGHBOR_COUNTRIES.push({
     ['20.3.2020', 1843, ],
     ['21.3.2020', 2649, ],
   ]
-});
+};
+NEIGHBOR_COUNTRIES['AT'] = AT;

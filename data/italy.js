@@ -1,7 +1,8 @@
-var ITALY = {
+const IT = {
   name: 'IT',
   population: 60589445,
-  color: window.chartColors.grey,
+  color: window.chartColors.IT,
+  default: true,
   data: [
     ['31.1.2020', 2, ],
     ['1.2.2020', 2, ],
@@ -56,4 +57,4 @@ var ITALY = {
     ['21.3.2020', 47021, ],
   ]
 };
-OTHER_COUNTRIES.push(ITALY);
+NEIGHBOR_COUNTRIES['IT'] = IT;

@@ -29,6 +29,27 @@
 			-webkit-user-select: none;
 			-ms-user-select: none;
 		}
+		.checkboxes {
+			padding: 1em;
+			margin-left: 2em;
+			margin-right: 2em;
+		}
+		.config {
+			display: none;
+			overflow: hidden;
+			padding: 1em;
+			margin-left: 4em;
+			margin-right: 4em;
+			background-color: #eee;
+			border: solid thin #ccc;
+		}
+		.chart-panel {
+			padding-top: 2em;
+		}
+		a {color:#0000FF;}
+		a:visited {color:#0000FF;}
+		a:hover {color:#0000FF;}
+		a:active {color:#0000FF;}
 	</style>
 	<meta property="og:title" content="COVID-19 Porovnaj Slovensko">
 	<meta property="og:image" content="https://qsmd.github.io/covid19slovakia/slovensko-susedia-denne.png">
@@ -41,7 +62,7 @@
 	<meta name="twitter:card" content="summary_large_image">
 </head>
 
-<body>
+<body style="font-family: Arial, Helvetica, sans-serif;">
 	<a href="https://github.com/qsmd/covid19slovakia" class="github-corner" aria-label="View source on Github">
 		<svg width="80" height="80" viewBox="0 0 250 250"
 			style="fill:#0080ec; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true">
@@ -57,102 +78,73 @@
 
 	<div style="padding-left: 2em; padding-right: 2em; text-align: center;">
 		<div>
-			<h1>COVID-19 na Slovensku: porovnanie s inými krajinami</h1>
+			<h1>COVID-19 Porovnaj Slovensko</h1>
 			<div style="padding: 1em; background-color: yellow; text-align: left;">
 				<p>
-					<b>Upozornenie:</b> Táto stránka nezobrazuje oficiálne štatistiky. Ide o amatérsky pohľad na verejne
-					dostupné dáta.
+					<b>Upozornenie:</b> Táto stránka nezobrazuje oficiálne štatistiky. Ide o amatérsky pohľad na verejne dostupné dáta.
 					Porovnáva vývoj v krajinách, keby mali rovnakú veľkosť a bod zlomu.
-					Bod zlomu je pre účely tejto stránky zvolený ako moment, kedy krajina dosiahne aspoň 2 pozitívne
-					prípady na 5 435 343 obyvateľov.
+					Bod zlomu je pre účely tejto stránky zvolený ako moment, kedy krajina dosiahne aspoň 2 pozitívne prípady na 5 435 343 obyvateľov.
 					Tento pohľad môže byť zavádzajúci, irelevantný a výpočty môžu byť chybné.
-					Nezdieľajte ak nerozumiete. Vytvorte si vlastné alebo <a
-						href="https://github.com/qsmd/covid19slovakia/issues">navrhnite úpravy</a>.
+					Nezdieľajte ak nerozumiete. Vytvorte si vlastné alebo
+					<a href="https://github.com/qsmd/covid19slovakia/issues">navrhnite úpravy</a>.
 				</p>
 			</div>
 		</div>
 
-		<div id="neighbor-total">
-			<h2>Slovensko a susedia celkovo |
-				<a id="download-neighbor-total" href="" download="slovensko-susedia-celkovo.png">Stiahnuť</a></h2>
+		<div id="total" class="chart-panel">
+			<p>
+				<b>Celkový počet prípadov</b> |
+				<a id="config-total" onclick="return false" href="#">Konfigurovať</a> |
+				<a id="download-total" href="#" download="slovensko-susedia-celkovo.png">Stiahnuť</a>
+			</p>
+			<div id="config-total-panel" class="config"></div>
 			<canvas id="canvas-total"></canvas>
 		</div>
-		<hr>
-		<div id="neighbor-daily">
-			<h2>Slovensko a susedia denne |
-				<a id="download-neighbor-daily" href="" download="slovensko-susedia-denne.png">Stiahnuť</a></h2>
+
+		<div id="daily" class="chart-panel">
+			<p>
+				<b>Denný počet prípadov</b> |
+				<a id="config-daily" class="menu" onclick="return false" href="#">Konfigurovať</a> |
+				<a id="download-daily" class="menu" href="#" download="slovensko-susedia-denne.png">Stiahnuť</a>
+			</p>
+			<div id="config-daily-panel" class="config"></div>
 			<canvas id="canvas-daily"></canvas>
 		</div>
-		<hr>
-		<div id="other-total">
-			<h2>Slovensko a vybrané krajiny celkovo |
-				<a id="download-other-total" href="" download="slovensko-vybrane-celkovo.png">Stiahnuť</a></h2>
-			<canvas id="canvas-other-total"></canvas>
-		</div>
-		<hr>
-		<div id="other-daily">
-			<h2>Slovensko a vybrané krajiny denne |
-				<a id="download-other-daily" href="" download="slovensko-vybrane-denne.png">Stiahnuť</a></h2>
-			<canvas id="canvas-other-daily"></canvas>
-		</div>
-		<hr>
-		<div style="margin-top: 2em;">
+
+		<div class="chart-panel">
 			<p>
 				<a href="https://virus-korona.sk">Slovenské údaje</a>/<a href="http://www.uvzsr.sk">testy</a> |
 				<a href="https://onemocneni-aktualne.mzcr.cz/covid-19">České údaje</a> |
-				<a href="https://www.who.int/emergencies/diseases/novel-coronavirus-2019/situation-reports/">WHO údaje</a> |
+				<a href="https://www.who.int/emergencies/diseases/novel-coronavirus-2019/situation-reports/">Who údaje</a> |
 				<a href="https://github.com/qsmd/covid19slovakia">Zdrojový kód</a> |
-				Aktualizované 22.3.2020 6:40
+				22.3.2020 6:40
 			</p>
 		</div>
 
 	</div>
 	<script>
 		window.onload = function () {
-			const SLOVAK_POPULATION = 5435343;
-			const DAYS_NEIGHBORS = 23;
-			const DAYS_OTHER = 28;
-			const DAILY = true;
 
-			window.lineNeighborTotal = new Chart(
-				document.getElementById('canvas-total').getContext('2d'),
-				createConfig(!DAILY, true, NEIGHBOR_COUNTRIES, SLOVAK_POPULATION, DAYS_NEIGHBORS, 2,
-					'Celkový vývoj ak by susedné krajiny mali rovnaký počet obyvateľov ako Slovensko.')
-			);
-
-			window.lineNeighborDaily = new Chart(
-				document.getElementById('canvas-daily').getContext('2d'),
-				createConfig(DAILY, true, NEIGHBOR_COUNTRIES, SLOVAK_POPULATION, DAYS_NEIGHBORS, 2,
-					'Denný vývoj ak by susedné krajiny mali rovnaký počet obyvateľov ako Slovensko.')
-			);
-
-			window.lineOtherTotal = new Chart(
-				document.getElementById('canvas-other-total').getContext('2d'),
-				createConfig(!DAILY, false, OTHER_COUNTRIES, SLOVAK_POPULATION, DAYS_OTHER, 2,
-					'Celkový vývoj ak by vybrané krajiny mali rovnaký počet obyvateľov ako Slovensko.')
-			);
-
-			window.lineOtherDaily = new Chart(
-				document.getElementById('canvas-other-daily').getContext('2d'),
-				createConfig(DAILY, false, OTHER_COUNTRIES, SLOVAK_POPULATION, DAYS_OTHER, 2,
-					'Denný vývoj ak by vybrané krajiny mali rovnaký počet obyvateľov ako Slovensko.')
-			);
-
-			document.getElementById("download-neighbor-total").addEventListener('click', function(event) {
-				event.target.href = window.lineNeighborTotal.toBase64Image();
+			['total', 'daily'].forEach(type => {
+				const daily = 'daily' === type;
+				let chart = new Chart(
+					document.getElementById(`canvas-${type}`).getContext('2d'), 
+					createConfig(daily, NEIGHBOR_COUNTRIES, SLOVAK_POPULATION, 2)
+				);
+				document.getElementById(`config-${type}`).addEventListener('click', collapseClick);
+				document.getElementById(`download-${type}`).addEventListener('click', function(event) {
+					event.target.href = chart.toBase64Image();
+				});
+				// checkboxes
+				let panel = document.getElementById(`config-${type}-panel`);
+				generateCheckboxes(type).forEach(element => {
+					panel.appendChild(element);
+					if ('INPUT' === element.tagName) {
+						element.addEventListener('click', event => checkboxClick(event, chart, daily));
+					}
+				});
 			});
 
-			document.getElementById("download-neighbor-daily").addEventListener('click', function(event) {
-				event.target.href = window.lineNeighborDaily.toBase64Image();
-			});
-
-			document.getElementById("download-other-total").addEventListener('click', function(event) {
-				event.target.href = window.lineOtherTotal.toBase64Image();
-			});
-
-			document.getElementById("download-other-daily").addEventListener('click', function(event) {
-				event.target.href = window.lineOtherDaily.toBase64Image();
-			});
 		};
 	</script>
 </body>
