@@ -2,7 +2,6 @@ const IT = {
   name: 'IT',
   population: 60589445,
   color: window.chartColors.IT,
-  default: true,
   data: [
     ['31.1.2020', 2, ],
     ['1.2.2020', 2, ],
