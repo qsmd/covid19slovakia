@@ -2,9 +2,7 @@
 // TODO remove right chart labels if not used
 // TODO white background for downloaded chart
 
-'use strict';
-
-var NEIGHBOR_COUNTRIES = {}
+const NEIGHBOR_COUNTRIES = {};
 const SLOVAK_POPULATION = 5435343;
 
 window.chartColors = {
