@@ -18,11 +18,11 @@ window.chartColors = {
 
 function getDefaultPeriod() {
   let max = 0;
-  for (const [countryName, country] of Object.entries(NEIGHBOR_COUNTRIES)) {
-	  if (country.default && country.data.length > max) {
+  Object.values(NEIGHBOR_COUNTRIES).forEach((country) => {
+    if (country.default && country.data.length > max) {
       max = country.data.length;
-	  }
-  };
+    }
+  });
   return max;
 }
 
@@ -92,7 +92,7 @@ function createConfig(daily, countries, population, minimumCases) {
     if (country.default) {
       datasets.push(getDataset(daily, countryName, country, population, minimumCases));
     }
-  };
+  }
 
   return {
     type: 'line',
