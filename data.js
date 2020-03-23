@@ -43,16 +43,18 @@ function countryToDatasets(daily, country, population, minimumCases) {
   let lastTotalCases = 0;
   let lastTotalTests = 0;
   const maxDays = getDefaultPeriod();
+  const CASES_INDEX = 1;
+  const TESTS_INDEX = 1;
 
   country.data.forEach((day) => {
-    const relativeCasesDailyOrTotal = ((day[1] - lastTotalCases) * multiplier).toFixed(2);
-    const relativeCasesTotal = (day[1] * multiplier).toFixed(2);
-    const relativeTestsDailyOrTotal = ((day[2] - lastTotalTests) * multiplier).toFixed(2);
+    const relativeCasesDailyOrTotal = ((day[CASES_INDEX] - lastTotalCases) * multiplier).toFixed(2);
+    const relativeCasesTotal = (day[CASES_INDEX] * multiplier).toFixed(2);
+    const relativeTestsDailyOrTotal = ((day[TESTS_INDEX] - lastTotalTests) * multiplier).toFixed(2);
     if (maxDays > applicableDays && relativeCasesTotal >= minimumCases) {
-      applicableDays++;
+      applicableDays += 1;
       if (daily) {
-        lastTotalCases = day[1];
-        lastTotalTests = day[2];
+        lastTotalCases = day[CASES_INDEX];
+        lastTotalTests = day[TESTS_INDEX];
       }
       datasets.cases.push(relativeCasesDailyOrTotal);
       if (country.tests) {
@@ -156,7 +158,7 @@ function generateCheckboxes(chartType) { // eslint-disable-line no-unused-vars
 }
 
 function checkboxClick(event, chart, daily) { // eslint-disable-line no-unused-vars
-  for (let i = 0; i < chart.data.datasets.length; i++) {
+  for (let i = 0; i < chart.data.datasets.length; i += 1) {
     if (event.target.value === chart.data.datasets[i].label) {
       chart.data.datasets.splice(i, 1);
     }
