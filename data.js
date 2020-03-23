@@ -4,7 +4,7 @@
 
 'use strict';
 
-var NEIGHBOR_COUNTRIES = {}
+var NEIGHBOR_COUNTRIES = {};
 const SLOVAK_POPULATION = 5435343;
 
 window.chartColors = {
@@ -137,14 +137,14 @@ function generateCheckboxes(chartType) {
 }
 
 function checkboxClick(event, chart, daily) {
-  for (var i = 0; i < chart.data.datasets.length; i++) {
+  for (let i = 0; i < chart.data.datasets.length; i++) {
     if (event.target.value === chart.data.datasets[i].label) {
       chart.data.datasets.splice(i, 1);
     }
   }
   if (event.target.checked) {
-    var countryName = event.target.value;
-    var country = NEIGHBOR_COUNTRIES[countryName];
+    let countryName = event.target.value;
+    let country = NEIGHBOR_COUNTRIES[countryName];
     chart.data.datasets.push(getDataset(daily, countryName, country, SLOVAK_POPULATION, 2));
   }
   let longestPeriod = getLongestPeriod(chart.data.datasets);
@@ -152,11 +152,11 @@ function checkboxClick(event, chart, daily) {
   chart.update();
 }
 
-var collapseClick = function collapseClick(event) {
-  var content = document.getElementById(event.target.id + '-panel');
+let collapseClick = function collapseClick(event) {
+  let content = document.getElementById(event.target.id + '-panel');
   if (content.style.display === "block") {
     content.style.display = "none";
   } else {
     content.style.display = "block";
   }
-}
+};
