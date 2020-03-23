@@ -63,36 +63,38 @@ function countryToDatasets(daily, country, population, minimumCases) {
   return datasets;
 }
 
-function getDataset(daily, countryName, country, population, minimumCases) {
-  const countryDatasets = countryToDatasets(daily, country, population, minimumCases);
-  if (countryName.includes('-testy')) {
-    const testsColor = `${country.color}33`;
-    return {
-      label: countryName,
-      backgroundColor: testsColor,
-      borderColor: testsColor,
-      data: countryDatasets.tests,
-      yAxisID: 'right-y-axis',
-      fill: true,
-    };
-  }
-  return {
-    label: countryName,
+function getCountryDatasets(daily, country, minimumCases) {
+  const datasets = [];
+  const countryDatasets = countryToDatasets(daily, country, SLOVAK_POPULATION, 2);
+  datasets.push({
+    label: country.name,
     backgroundColor: country.color,
     borderColor: country.color,
     data: countryDatasets.cases,
     yAxisID: 'left-y-axis',
     fill: false,
-  };
+  });
+  if (country.tests) {
+    const testsColor = `${country.color}33`;
+    datasets.push({
+      label: `${country.name}-testy`,
+      backgroundColor: testsColor,
+      borderColor: testsColor,
+      data: countryDatasets.tests,
+      yAxisID: 'right-y-axis',
+      fill: true,
+    });
+  }
+  return datasets;
 }
 
-function createConfig(daily, countries, population, minimumCases) {
+function createConfig(daily) { // eslint-disable-line no-unused-vars
   const datasets = [];
-  for (const [countryName, country] of Object.entries(countries)) {
+  Object.values(NEIGHBOR_COUNTRIES).forEach((country) => {
     if (country.default) {
-      datasets.push(getDataset(daily, countryName, country, population, minimumCases));
+      datasets.push(...getCountryDatasets(daily, country));
     }
-  }
+  });
 
   return {
     type: 'line',
@@ -136,15 +138,21 @@ function createConfig(daily, countries, population, minimumCases) {
 // generate <input type="checkbox" id="check-total-SK" value="SK"> SK |
 function generateCheckboxes(chartType) {
   const nodes = [];
-  for (const [countryName, country] of Object.entries(NEIGHBOR_COUNTRIES)) {
-    const input = document.createElement('input');
-    input.setAttribute('type', 'checkbox');
-    input.setAttribute('id', 'check-' + chartType + '-' + countryName);
-    input.setAttribute('value', countryName);
-    input.checked = country.default;
-    nodes.push(input);
-    nodes.push(document.createTextNode(`${countryName} |\n`));
-  }
+  Object.values(NEIGHBOR_COUNTRIES).forEach((country) => {
+    const countryKeys = [country.name];
+    if (country.tests) {
+      countryKeys.push(`${country.name}-testy`);
+    }
+    countryKeys.forEach((countryKey) => {
+      const input = document.createElement('input');
+      input.setAttribute('type', 'checkbox');
+      input.setAttribute('id', `${chartType}-countryKey`);
+      input.setAttribute('value', countryKey);
+      input.checked = country.default;
+      nodes.push(input);
+      nodes.push(document.createTextNode(`${countryKey} |\n`));
+    });
+  });
   return nodes;
 }
 
@@ -155,12 +163,17 @@ function checkboxClick(event, chart, daily) {
     }
   }
   if (event.target.checked) {
-    const countryName = event.target.value;
-    const country = NEIGHBOR_COUNTRIES[countryName];
-    chart.data.datasets.push(getDataset(daily, countryName, country, SLOVAK_POPULATION, 2));
+    const countryKeyParts = event.target.value.split('-');
+    const country = NEIGHBOR_COUNTRIES[countryKeyParts[0]];
+    getCountryDatasets(daily, country, SLOVAK_POPULATION, 2).forEach((dataset) => {
+      if (event.target.value === dataset.label) {
+        chart.data.datasets.push(dataset);
+      }
+    });
   }
   const longestPeriod = getLongestPeriod(chart.data.datasets);
-  chart.data.labels = Array.from(Array(longestPeriod).keys());
+  chart.data.labels.splice(0, chart.data.labels.length);
+  chart.data.labels.push(...Array.from(Array(longestPeriod).keys()));
   chart.update();
 }
 

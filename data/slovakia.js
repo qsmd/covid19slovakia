@@ -2,7 +2,7 @@
 // Test source: http://www.uvzsr.sk
 // Date increased by 1 to match WHO reporting.
 
-const SK = {
+NEIGHBOR_COUNTRIES.SK = {
   name: 'SK',
   population: 5435343,
   color: window.chartColors.SK,
@@ -26,7 +26,5 @@ const SK = {
     ['21.3.2020', 137, 2807],
     ['22.3.2020', 178, 3247],
     ['23.3.2020', 185, 3489],
-  ]
+  ],
 };
-NEIGHBOR_COUNTRIES['SK'] = SK;
-NEIGHBOR_COUNTRIES['SK-testy'] = SK;
