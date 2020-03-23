@@ -2,8 +2,6 @@
 // TODO remove right chart labels if not used
 // TODO white background for downloaded chart
 
-'use strict';
-
 const NEIGHBOR_COUNTRIES = {};
 const SLOVAK_POPULATION = 5435343;
 
@@ -18,15 +16,35 @@ window.chartColors = {
   ES: '#2f4b7c',
 };
 
+function getDefaultPeriod() {
+  let max = 0;
+  for (const [countryName, country] of Object.entries(NEIGHBOR_COUNTRIES)) {
+	  if (country.default && country.data.length > max) {
+      max = country.data.length;
+	  }
+  };
+  return max;
+}
+
+function getLongestPeriod(datasets) {
+  let max = 0;
+  datasets.forEach((dataset) => {
+    if (dataset.data.length > max) {
+      max = dataset.data.length;
+    }
+  });
+  return max;
+}
+
 function countryToDatasets(daily, country, population, minimumCases) {
   const multiplier = population / country.population;
-  const datasets = {'cases': [], 'tests': []};
+  const datasets = { cases: [], tests: [] };
   let applicableDays = 0;
   let lastTotalCases = 0;
   let lastTotalTests = 0;
   const maxDays = getDefaultPeriod();
 
-  country.data.forEach(day => {
+  country.data.forEach((day) => {
     const relativeCasesDailyOrTotal = ((day[1] - lastTotalCases) * multiplier).toFixed(2);
     const relativeCasesTotal = (day[1] * multiplier).toFixed(2);
     const relativeTestsDailyOrTotal = ((day[2] - lastTotalTests) * multiplier).toFixed(2);
@@ -55,18 +73,17 @@ function getDataset(daily, countryName, country, population, minimumCases) {
       borderColor: testsColor,
       data: countryDatasets.tests,
       yAxisID: 'right-y-axis',
-      fill: true
-    };
-  } else {
-    return {
-      label: countryName,
-      backgroundColor: country.color,
-      borderColor: country.color,
-      data: countryDatasets.cases,
-      yAxisID: 'left-y-axis',
-      fill: false
+      fill: true,
     };
   }
+  return {
+    label: countryName,
+    backgroundColor: country.color,
+    borderColor: country.color,
+    data: countryDatasets.cases,
+    yAxisID: 'left-y-axis',
+    fill: false,
+  };
 }
 
 function createConfig(daily, countries, population, minimumCases) {
@@ -79,9 +96,10 @@ function createConfig(daily, countries, population, minimumCases) {
 
   return {
     type: 'line',
-    data: { 
-      labels: Array.from(Array(getLongestPeriod(datasets)).keys()), 
-      datasets: datasets },
+    data: {
+      labels: Array.from(Array(getLongestPeriod(datasets)).keys()),
+      datasets,
+    },
     options: {
       responsive: true,
       title: { display: false },
@@ -91,34 +109,28 @@ function createConfig(daily, countries, population, minimumCases) {
       scales: {
         xAxes: [{ display: true, scaleLabel: { display: true, labelString: 'Dni od bodu zlomu (aspoň 2 prípady / počet obyvateľov Slovenska)' } }],
         yAxes: [
-          { id: 'left-y-axis', display: true, position: 'left', scaleLabel: { 
-            display: true, labelString: (daily ? 'Denný' : 'Celkový') + ' počet prípadov / počet obyvateľov Slovenska' }},
-          { id: 'right-y-axis', display: true, position: 'right', scaleLabel: { 
-            display: true, labelString: (daily ? 'Denný' : 'Celkový') + ' počet testov / počet obyvateľov Slovenska' }},
-        ]
-      }
-    }
+          {
+            id: 'left-y-axis',
+            display: true,
+            position: 'left',
+            scaleLabel: {
+              display: true,
+              labelString: `${(daily ? 'Denný' : 'Celkový')} počet prípadov / počet obyvateľov Slovenska`,
+            },
+          },
+          {
+            id: 'right-y-axis',
+            display: true,
+            position: 'right',
+            scaleLabel: {
+              display: true,
+              labelString: `${(daily ? 'Denný' : 'Celkový')} počet testov / počet obyvateľov Slovenska` 
+            },
+          },
+        ],
+      },
+    },
   };
-}
-
-function getDefaultPeriod() {
-  let max = 0;
-  for (const [countryName, country] of Object.entries(NEIGHBOR_COUNTRIES)) {
-    if (country.default && country.data.length > max) {
-      max = country.data.length;
-    }
-  };
-  return max;
-}
-
-function getLongestPeriod(datasets) {
-  let max = 0;
-  datasets.forEach(dataset => {
-    if (dataset.data.length > max) {
-      max = dataset.data.length;
-    }
-  });
-  return max;
 }
 
 // generate <input type="checkbox" id="check-total-SK" value="SK"> SK |
@@ -153,10 +165,10 @@ function checkboxClick(event, chart, daily) {
 }
 
 const collapseClick = function collapseClick(event) {
-  const content = document.getElementById(event.target.id + '-panel');
-  if (content.style.display === "block") {
-    content.style.display = "none";
+  const content = document.getElementById(`${event.target.id}-panel`);
+  if (content.style.display === 'block') {
+    content.style.display = 'none';
   } else {
-    content.style.display = "block";
+    content.style.display = 'block';
   }
 };
