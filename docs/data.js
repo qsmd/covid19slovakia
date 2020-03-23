@@ -44,7 +44,7 @@ function countryToDatasets(daily, country, population, minimumCases) {
   let lastTotalTests = 0;
   const maxDays = getDefaultPeriod();
   const CASES_INDEX = 1;
-  const TESTS_INDEX = 1;
+  const TESTS_INDEX = 2;
 
   country.data.forEach((day) => {
     const relativeCasesDailyOrTotal = ((day[CASES_INDEX] - lastTotalCases) * multiplier).toFixed(2);
