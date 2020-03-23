@@ -2,7 +2,7 @@
 // Date increased by 1 to match WHO reporting.
 // Official Czech stats do not match those of WHO, though. There is a small difference.
 
-NEIGHBOR_COUNTRIES.CZ = {
+COUNTRIES.push({ // eslint-disable-line no-undef
   name: 'CZ',
   population: 10578820,
   color: window.chartColors.CZ,
@@ -32,4 +32,4 @@ NEIGHBOR_COUNTRIES.CZ = {
     ['22.3.2020', 1047, 15584],
     ['23.3.2020', 1161, 17377],
   ],
-};
+});

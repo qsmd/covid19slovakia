@@ -2,7 +2,7 @@
 // TODO remove right chart labels if not used
 // TODO white background for downloaded chart
 
-const NEIGHBOR_COUNTRIES = {};
+const COUNTRIES = [];
 const SLOVAK_POPULATION = 5435343;
 
 window.chartColors = {
@@ -18,7 +18,7 @@ window.chartColors = {
 
 function getDefaultPeriod() {
   let max = 0;
-  Object.values(NEIGHBOR_COUNTRIES).forEach((country) => {
+  COUNTRIES.forEach((country) => {
     if (country.default && country.data.length > max) {
       max = country.data.length;
     }
@@ -92,7 +92,7 @@ function getCountryDatasets(daily, country) {
 
 function createConfig(daily) { // eslint-disable-line no-unused-vars
   const datasets = [];
-  Object.values(NEIGHBOR_COUNTRIES).forEach((country) => {
+  COUNTRIES.forEach((country) => {
     if (country.default) {
       datasets.push(...getCountryDatasets(daily, country));
     }
@@ -139,7 +139,7 @@ function createConfig(daily) { // eslint-disable-line no-unused-vars
 
 function generateCheckboxes(chartType) { // eslint-disable-line no-unused-vars
   const nodes = [];
-  Object.values(NEIGHBOR_COUNTRIES).forEach((country) => {
+  COUNTRIES.forEach((country) => {
     const countryKeys = [country.name];
     if (country.tests) {
       countryKeys.push(`${country.name}-testy`);
@@ -157,6 +157,16 @@ function generateCheckboxes(chartType) { // eslint-disable-line no-unused-vars
   return nodes;
 }
 
+function getCountry(countryName) {
+  let result;
+  COUNTRIES.forEach((country) => {
+    if (country.name === countryName.split('-')[0]) {
+      result = country;
+    }
+  });
+  return result;
+}
+
 function checkboxClick(event, chart, daily) { // eslint-disable-line no-unused-vars
   for (let i = 0; i < chart.data.datasets.length; i += 1) {
     if (event.target.value === chart.data.datasets[i].label) {
@@ -164,13 +174,14 @@ function checkboxClick(event, chart, daily) { // eslint-disable-line no-unused-v
     }
   }
   if (event.target.checked) {
-    const countryKeyParts = event.target.value.split('-');
-    const country = NEIGHBOR_COUNTRIES[countryKeyParts[0]];
-    getCountryDatasets(daily, country).forEach((dataset) => {
-      if (event.target.value === dataset.label) {
-        chart.data.datasets.push(dataset);
-      }
-    });
+    const country = getCountry(event.target.value);
+    if (country) {
+      getCountryDatasets(daily, country).forEach((dataset) => {
+        if (event.target.value === dataset.label) {
+          chart.data.datasets.push(dataset);
+        }
+      });
+    }
   }
   const longestPeriod = getLongestPeriod(chart.data.datasets);
   chart.data.labels.splice(0, chart.data.labels.length);

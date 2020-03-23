@@ -2,7 +2,7 @@
 // Test source: http://www.uvzsr.sk
 // Date increased by 1 to match WHO reporting.
 
-NEIGHBOR_COUNTRIES.SK = {
+COUNTRIES.push({ // eslint-disable-line no-undef
   name: 'SK',
   population: 5435343,
   color: window.chartColors.SK,
@@ -27,4 +27,4 @@ NEIGHBOR_COUNTRIES.SK = {
     ['22.3.2020', 178, 3247],
     ['23.3.2020', 185, 3489],
   ],
-};
+});

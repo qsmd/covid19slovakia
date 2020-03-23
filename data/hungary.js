@@ -1,4 +1,4 @@
-const HU = {
+COUNTRIES.push({ // eslint-disable-line no-undef
   name: 'HU',
   population: 9772756,
   color: window.chartColors.HU,
@@ -21,6 +21,5 @@ const HU = {
     ['20.3.2020', 73, ],
     ['21.3.2020', 85, ],
     ['22.3.2020', 131, ],
-  ]
-};
-NEIGHBOR_COUNTRIES['HU'] = HU;
+  ],
+});
