@@ -63,7 +63,7 @@ function countryToDatasets(daily, country, population, minimumCases) {
   return datasets;
 }
 
-function getCountryDatasets(daily, country, minimumCases) {
+function getCountryDatasets(daily, country) {
   const datasets = [];
   const countryDatasets = countryToDatasets(daily, country, SLOVAK_POPULATION, 2);
   datasets.push({
@@ -164,7 +164,7 @@ function checkboxClick(event, chart, daily) { // eslint-disable-line no-unused-v
   if (event.target.checked) {
     const countryKeyParts = event.target.value.split('-');
     const country = NEIGHBOR_COUNTRIES[countryKeyParts[0]];
-    getCountryDatasets(daily, country, SLOVAK_POPULATION, 2).forEach((dataset) => {
+    getCountryDatasets(daily, country).forEach((dataset) => {
       if (event.target.value === dataset.label) {
         chart.data.datasets.push(dataset);
       }
