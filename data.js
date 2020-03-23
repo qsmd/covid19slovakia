@@ -126,7 +126,7 @@ function createConfig(daily) { // eslint-disable-line no-unused-vars
             position: 'right',
             scaleLabel: {
               display: true,
-              labelString: `${(daily ? 'Denný' : 'Celkový')} počet testov / počet obyvateľov Slovenska` 
+              labelString: `${(daily ? 'Denný' : 'Celkový')} počet testov / počet obyvateľov Slovenska`,
             },
           },
         ],
@@ -135,8 +135,7 @@ function createConfig(daily) { // eslint-disable-line no-unused-vars
   };
 }
 
-// generate <input type="checkbox" id="check-total-SK" value="SK"> SK |
-function generateCheckboxes(chartType) {
+function generateCheckboxes(chartType) { // eslint-disable-line no-unused-vars
   const nodes = [];
   Object.values(NEIGHBOR_COUNTRIES).forEach((country) => {
     const countryKeys = [country.name];
@@ -156,7 +155,7 @@ function generateCheckboxes(chartType) {
   return nodes;
 }
 
-function checkboxClick(event, chart, daily) {
+function checkboxClick(event, chart, daily) { // eslint-disable-line no-unused-vars
   for (let i = 0; i < chart.data.datasets.length; i++) {
     if (event.target.value === chart.data.datasets[i].label) {
       chart.data.datasets.splice(i, 1);
@@ -177,7 +176,7 @@ function checkboxClick(event, chart, daily) {
   chart.update();
 }
 
-const collapseClick = function collapseClick(event) {
+const collapseClick = function collapseClick(event) { // eslint-disable-line no-unused-vars
   const content = document.getElementById(`${event.target.id}-panel`);
   if (content.style.display === 'block') {
     content.style.display = 'none';
