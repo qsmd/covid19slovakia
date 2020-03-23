@@ -4,7 +4,7 @@
 
 'use strict';
 
-var NEIGHBOR_COUNTRIES = {};
+const NEIGHBOR_COUNTRIES = {};
 const SLOVAK_POPULATION = 5435343;
 
 window.chartColors = {
@@ -19,17 +19,17 @@ window.chartColors = {
 };
 
 function countryToDatasets(daily, country, population, minimumCases) {
-  let multiplier = population / country.population;
-  let datasets = {'cases': [], 'tests': []};
+  const multiplier = population / country.population;
+  const datasets = {'cases': [], 'tests': []};
   let applicableDays = 0;
   let lastTotalCases = 0;
   let lastTotalTests = 0;
-  let maxDays = getDefaultPeriod();
+  const maxDays = getDefaultPeriod();
 
   country.data.forEach(day => {
-    let relativeCasesDailyOrTotal = ((day[1] - lastTotalCases) * multiplier).toFixed(2);
-    let relativeCasesTotal = (day[1] * multiplier).toFixed(2);
-    let relativeTestsDailyOrTotal = ((day[2] - lastTotalTests) * multiplier).toFixed(2);
+    const relativeCasesDailyOrTotal = ((day[1] - lastTotalCases) * multiplier).toFixed(2);
+    const relativeCasesTotal = (day[1] * multiplier).toFixed(2);
+    const relativeTestsDailyOrTotal = ((day[2] - lastTotalTests) * multiplier).toFixed(2);
     if (maxDays > applicableDays && relativeCasesTotal >= minimumCases) {
       applicableDays++;
       if (daily) {
@@ -46,9 +46,9 @@ function countryToDatasets(daily, country, population, minimumCases) {
 }
 
 function getDataset(daily, countryName, country, population, minimumCases) {
-  let countryDatasets = countryToDatasets(daily, country, population, minimumCases);
+  const countryDatasets = countryToDatasets(daily, country, population, minimumCases);
   if (countryName.includes('-testy')) {
-    let testsColor = `${country.color}33`;
+    const testsColor = `${country.color}33`;
     return {
       label: countryName,
       backgroundColor: testsColor,
@@ -70,8 +70,8 @@ function getDataset(daily, countryName, country, population, minimumCases) {
 }
 
 function createConfig(daily, countries, population, minimumCases) {
-  let datasets = [];
-  for (let [countryName, country] of Object.entries(countries)) {
+  const datasets = [];
+  for (const [countryName, country] of Object.entries(countries)) {
     if (country.default) {
       datasets.push(getDataset(daily, countryName, country, population, minimumCases));
     }
@@ -103,7 +103,7 @@ function createConfig(daily, countries, population, minimumCases) {
 
 function getDefaultPeriod() {
   let max = 0;
-  for (let [countryName, country] of Object.entries(NEIGHBOR_COUNTRIES)) {
+  for (const [countryName, country] of Object.entries(NEIGHBOR_COUNTRIES)) {
     if (country.default && country.data.length > max) {
       max = country.data.length;
     }
@@ -123,9 +123,9 @@ function getLongestPeriod(datasets) {
 
 // generate <input type="checkbox" id="check-total-SK" value="SK"> SK |
 function generateCheckboxes(chartType) {
-  let nodes = [];
-  for (let [countryName, country] of Object.entries(NEIGHBOR_COUNTRIES)) {
-    let input = document.createElement('input');
+  const nodes = [];
+  for (const [countryName, country] of Object.entries(NEIGHBOR_COUNTRIES)) {
+    const input = document.createElement('input');
     input.setAttribute('type', 'checkbox');
     input.setAttribute('id', 'check-' + chartType + '-' + countryName);
     input.setAttribute('value', countryName);
@@ -143,17 +143,17 @@ function checkboxClick(event, chart, daily) {
     }
   }
   if (event.target.checked) {
-    let countryName = event.target.value;
-    let country = NEIGHBOR_COUNTRIES[countryName];
+    const countryName = event.target.value;
+    const country = NEIGHBOR_COUNTRIES[countryName];
     chart.data.datasets.push(getDataset(daily, countryName, country, SLOVAK_POPULATION, 2));
   }
-  let longestPeriod = getLongestPeriod(chart.data.datasets);
+  const longestPeriod = getLongestPeriod(chart.data.datasets);
   chart.data.labels = Array.from(Array(longestPeriod).keys());
   chart.update();
 }
 
-let collapseClick = function collapseClick(event) {
-  let content = document.getElementById(event.target.id + '-panel');
+const collapseClick = function collapseClick(event) {
+  const content = document.getElementById(event.target.id + '-panel');
   if (content.style.display === "block") {
     content.style.display = "none";
   } else {
