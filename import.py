@@ -7,13 +7,13 @@ COUNTRIES = {
     'Germany': 'DE',
     'Hungary': 'HU',
     'Italy': 'IT',
-    'Korea, South': 'KR',
-    'Norway': 'NO',
+    # 'Korea, South': 'KR',
+    # 'Norway': 'NO',
     'Poland': 'PL',
     'Slovakia': 'SK',
     'Spain': 'ES',
-    'United Kingdom': 'UK',
-    'US': 'US',
+    # 'United Kingdom': 'UK',
+    # 'US': 'US',
 }
 
 def get_nonzero_idx(days):
