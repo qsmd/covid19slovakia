@@ -2,9 +2,18 @@ import csv
 
 TIMELINE_IDX = 4
 COUNTRIES = {
-    'Slovakia': 'SK',
+    'Austria': 'AT',
     'Czechia': 'CZ',
-    'United Kingdom': 'UK'
+    'Germany': 'DE',
+    'Hungary': 'HU',
+    'Italy': 'IT',
+    'Korea, South': 'KR',
+    'Norway': 'NO',
+    'Poland': 'PL',
+    'Slovakia': 'SK',
+    'Spain': 'ES',
+    'United Kingdom': 'UK',
+    'US': 'US',
 }
 
 def get_nonzero_idx(days):
