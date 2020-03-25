@@ -8,20 +8,20 @@ import * as util from './util.js'; // eslint-disable-line import/extensions
 import ChartConfig from './ChartConfig.js'; // eslint-disable-line import/extensions
 
 window.onload = function () {
-  ['total', 'daily'].forEach((type) => {
-    const daily = type === 'daily';
-    const chartConfig = new ChartConfig();
-    const chart = new Chart(document.getElementById(`canvas-${type}`).getContext('2d'), util.createConfig(chartConfig, daily));
-    document.getElementById(`config-${type}`).addEventListener('click', util.collapseClick);
+  ['total-cases', 'daily-cases', 'total-tests', 'daily-tests'].forEach((type) => {
+    const daily = type.includes('daily');
+    const chartConfig = new ChartConfig(type);
+    const chart = new Chart(document.getElementById(`canvas-${type}`).getContext('2d'), util.createConfig(chartConfig));
+    document.getElementById(`config-${type}`).addEventListener('click', () => { chartConfig.collapseClick(); });
     document.getElementById(`download-${type}`).addEventListener('click', (event) => {
       event.target.href = chart.toBase64Image();
     });
     // checkboxes
-    const panel = document.getElementById(`config-${type}-panel`);
+    const panel = document.getElementById(`panel-${type}`);
     chartConfig.generateCheckboxes(type).forEach((element) => {
       panel.appendChild(element);
       if (element.tagName === 'INPUT') {
-        element.addEventListener('click', (event) => chartConfig.checkboxClick(event, chart, daily));
+        element.addEventListener('click', (e) => { chartConfig.checkboxClick(e, daily, chart); });
       }
     });
   });

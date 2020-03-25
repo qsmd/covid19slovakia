@@ -1,8 +1,9 @@
-import COUNTRIES from './data/timelines.js'; // eslint-disable-line import/extensions
-import * as util from './util.js';
+import CASES from './data/timelines.js'; // eslint-disable-line import/extensions
+import TESTS from './data/tests.js'; // eslint-disable-line import/extensions
+import * as util from './util.js'; // eslint-disable-line import/extensions
 
 export default class ChartConfig {
-  constructor() {
+  constructor(type) {
     this.colors = [
       '#36a2eb',
       '#ff6384',
@@ -13,32 +14,24 @@ export default class ChartConfig {
       '#a05195',
       '#665191',
     ];
+    this.type = type;
+    this.countries = type.includes('-tests') ? TESTS : CASES;
+    this.defaults = type.includes('-tests') ? util.DEFAULT_TESTS : util.DEFAULT_CASES;
     this.checkboxes = [];
   }
 
   getCountryDatasets(daily, country) {
     const datasets = [];
-    const countryDatasets = util.countryToDatasets(daily, country, 2);
+    const countryDatasets = util.countryToDatasets(daily, country, this.countries, this.defaults);
     const color = this.colors.shift();
     datasets.push({
       label: country[0],
       backgroundColor: color,
       borderColor: color,
-      data: countryDatasets.cases,
+      data: countryDatasets,
       yAxisID: 'left-y-axis',
       fill: false,
     });
-    if (country.tests) {
-      const testsColor = `${color}33`;
-      datasets.push({
-        label: `${country[0]}-testy`,
-        backgroundColor: testsColor,
-        borderColor: testsColor,
-        data: countryDatasets.tests,
-        yAxisID: 'right-y-axis',
-        fill: true,
-      });
-    }
     return datasets;
   }
 
@@ -58,9 +51,18 @@ export default class ChartConfig {
     });
   }
 
-  checkboxClick(event, chart, daily) {
+  collapseClick() {
+    const content = document.getElementById(`panel-${this.type}`);
+    if (content.style.display === 'block') {
+      content.style.display = 'none';
+    } else {
+      content.style.display = 'block';
+    }
+  }
+
+  checkboxClick(event, daily, chart) {
     if (event.target.checked) {
-      const country = util.getCountry(event.target.value);
+      const country = util.getCountry(this.countries, event.target.value);
       if (country) {
         this.getCountryDatasets(daily, country).forEach((dataset) => {
           if (event.target.value === dataset.label) {
@@ -86,9 +88,9 @@ export default class ChartConfig {
     chart.update();
   }
 
-  generateCheckboxes(chartType) {
+  generateCheckboxes(type) {
     const nodes = [];
-    COUNTRIES.forEach((country) => {
+    this.countries.forEach((country) => {
       const countryKeys = [country[0]];
       if (country.tests) {
         countryKeys.push(`${country[0]}-testy`);
@@ -96,9 +98,9 @@ export default class ChartConfig {
       countryKeys.forEach((countryKey) => {
         const input = document.createElement('input');
         input.setAttribute('type', 'checkbox');
-        input.setAttribute('id', `${chartType}-countryKey`);
+        input.setAttribute('id', `${type}-${countryKey}`);
         input.setAttribute('value', countryKey);
-        input.checked = util.DEFAULT.includes(country[0]);
+        input.checked = this.defaults.includes(country[0]);
         nodes.push(input);
         nodes.push(document.createTextNode(`${countryKey} |\n`));
         this.checkboxes.push(input);
