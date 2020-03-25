@@ -43,6 +43,8 @@ def process_file():
                 idx, days = get_days(row)
                 print(f"  ['{COUNTRIES[row[1]]}','{row[1]}','{date_sk(header[idx])}',{','.join(days)}],")
 
+print('/* eslint-disable comma-spacing */')
 print('const COUNTRIES = [')
 process_file()
 print('];')
+print('export default COUNTRIES;')

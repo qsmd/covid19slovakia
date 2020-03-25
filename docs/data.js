@@ -2,36 +2,38 @@
 // TODO remove right chart labels if not used
 // TODO white background for downloaded chart
 
-// eslint-disable-next-line import/extensions
-import * as chart from './Chart.bundle.min.js'; // eslint-disable-line no-unused-vars
+// eslint-disable-next-line no-unused-vars
+import * as chartjs from './Chart.bundle.min.js'; // eslint-disable-line import/extensions
+import COUNTRIES from './data/timelines.js'; // eslint-disable-line import/extensions
 
-/* eslint-disable import/extensions */
-import AT from './data/austria.js';
-import CZ from './data/czechia.js';
-import DE from './data/germany.js';
-import HU from './data/hungary.js';
-import IT from './data/italy.js';
-import PL from './data/poland.js';
-import SK from './data/slovakia.js';
-import ES from './data/spain.js';
-
-const COUNTRIES = [SK, CZ, AT, DE, HU, IT, PL, ES];
 const SLOVAK_POPULATION = 5435343;
-
-SK.color = '#36a2eb';
-CZ.color = '#ff6384';
-AT.color = '#ffa600';
-DE.color = '#ff7c43';
-HU.color = '#d45087';
-IT.color = '#a05195';
-PL.color = '#665191';
-ES.color = '#2f4b7c';
+const DEFAULT = ['SK', 'CZ', 'AT', 'HU', 'PL'];
+const POPULATION = {
+  AT: 8772865,
+  CZ: 10578820,
+  DE: 82521653,
+  ES: 46528966,
+  HU: 9772756,
+  IT: 60589445,
+  PL: 37972964,
+  SK: 5435343,
+};
+const COLOR = {
+  AT: '#ffa600',
+  CZ: '#ff6384',
+  DE: '#ff7c43',
+  ES: '#2f4b7c',
+  HU: '#d45087',
+  IT: '#a05195',
+  PL: '#665191',
+  SK: '#36a2eb',
+};
 
 function getDefaultPeriod() {
   let max = 0;
   COUNTRIES.forEach((country) => {
-    if (country.default && country.data.length > max) {
-      max = country.data.length;
+    if (DEFAULT.includes(country[0]) && (country.length - 3) > max) {
+      max = country.length - 3;
     }
   });
   return max;
@@ -48,29 +50,21 @@ function getLongestPeriod(datasets) {
 }
 
 function countryToDatasets(daily, country, population, minimumCases) {
-  const multiplier = population / country.population;
+  const multiplier = population / POPULATION[country[0]];
   const datasets = { cases: [], tests: [] };
   let applicableDays = 0;
   let lastTotalCases = 0;
-  let lastTotalTests = 0;
   const maxDays = getDefaultPeriod();
-  const CASES_INDEX = 1;
-  const TESTS_INDEX = 2;
 
-  country.data.forEach((day) => {
-    const relativeCasesDailyOrTotal = ((day[CASES_INDEX] - lastTotalCases) * multiplier).toFixed(2);
-    const relativeCasesTotal = (day[CASES_INDEX] * multiplier).toFixed(2);
-    const relativeTestsDailyOrTotal = ((day[TESTS_INDEX] - lastTotalTests) * multiplier).toFixed(2);
+  country.slice(3).forEach((day) => {
+    const relativeCasesDailyOrTotal = ((day - lastTotalCases) * multiplier).toFixed(2);
+    const relativeCasesTotal = (day * multiplier).toFixed(2);
     if (maxDays > applicableDays && relativeCasesTotal >= minimumCases) {
       applicableDays += 1;
       if (daily) {
-        lastTotalCases = day[CASES_INDEX];
-        lastTotalTests = day[TESTS_INDEX];
+        lastTotalCases = day;
       }
       datasets.cases.push(relativeCasesDailyOrTotal);
-      if (country.tests) {
-        datasets.tests.push(relativeTestsDailyOrTotal);
-      }
     }
   });
   return datasets;
@@ -80,17 +74,17 @@ function getCountryDatasets(daily, country) {
   const datasets = [];
   const countryDatasets = countryToDatasets(daily, country, SLOVAK_POPULATION, 2);
   datasets.push({
-    label: country.name,
-    backgroundColor: country.color,
-    borderColor: country.color,
+    label: country[0],
+    backgroundColor: COLOR[country[0]],
+    borderColor: COLOR[country[0]],
     data: countryDatasets.cases,
     yAxisID: 'left-y-axis',
     fill: false,
   });
   if (country.tests) {
-    const testsColor = `${country.color}33`;
+    const testsColor = `${COLOR[country[0]]}33`;
     datasets.push({
-      label: `${country.name}-testy`,
+      label: `${country[0]}-testy`,
       backgroundColor: testsColor,
       borderColor: testsColor,
       data: countryDatasets.tests,
@@ -104,7 +98,7 @@ function getCountryDatasets(daily, country) {
 function createConfig(daily) { // eslint-disable-line no-unused-vars
   const datasets = [];
   COUNTRIES.forEach((country) => {
-    if (country.default) {
+    if (DEFAULT.includes(country[0])) {
       datasets.push(...getCountryDatasets(daily, country));
     }
   });
@@ -151,16 +145,16 @@ function createConfig(daily) { // eslint-disable-line no-unused-vars
 function generateCheckboxes(chartType) { // eslint-disable-line no-unused-vars
   const nodes = [];
   COUNTRIES.forEach((country) => {
-    const countryKeys = [country.name];
+    const countryKeys = [country[0]];
     if (country.tests) {
-      countryKeys.push(`${country.name}-testy`);
+      countryKeys.push(`${country[0]}-testy`);
     }
     countryKeys.forEach((countryKey) => {
       const input = document.createElement('input');
       input.setAttribute('type', 'checkbox');
       input.setAttribute('id', `${chartType}-countryKey`);
       input.setAttribute('value', countryKey);
-      input.checked = country.default;
+      input.checked = DEFAULT.includes(country[0]);
       nodes.push(input);
       nodes.push(document.createTextNode(`${countryKey} |\n`));
     });
@@ -171,7 +165,7 @@ function generateCheckboxes(chartType) { // eslint-disable-line no-unused-vars
 function getCountry(countryName) {
   let result;
   COUNTRIES.forEach((country) => {
-    if (country.name === countryName.split('-')[0]) {
+    if (country[0] === countryName.split('-')[0]) {
       result = country;
     }
   });
