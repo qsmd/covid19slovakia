@@ -13,8 +13,8 @@
 	</script>
 	<meta charset="UTF-8">
 	<title>COVID-19 Porovnaj Slovensko</title>
-	<script src="Chart.bundle.min.js"></script>
-	<script src="data.js"></script>
+	<script type="module" src="Chart.bundle.min.js"></script>
+	<script type="module" src="data.js"></script>
 	<script src="data/slovakia.js"></script>
 	<script src="data/hungary.js"></script>
 	<script src="data/austria.js"></script>
@@ -122,31 +122,6 @@
 		</div>
 
 	</div>
-	<script>
-		window.onload = function () {
-
-			['total', 'daily'].forEach(type => {
-				const daily = 'daily' === type;
-				let chart = new Chart(
-					document.getElementById(`canvas-${type}`).getContext('2d'), 
-					createConfig(daily)
-				);
-				document.getElementById(`config-${type}`).addEventListener('click', collapseClick);
-				document.getElementById(`download-${type}`).addEventListener('click', function(event) {
-					event.target.href = chart.toBase64Image();
-				});
-				// checkboxes
-				let panel = document.getElementById(`config-${type}-panel`);
-				generateCheckboxes(type).forEach(element => {
-					panel.appendChild(element);
-					if ('INPUT' === element.tagName) {
-						element.addEventListener('click', event => checkboxClick(event, chart, daily));
-					}
-				});
-			});
-
-		};
-	</script>
 </body>
 
 </html>

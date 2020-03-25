@@ -2,6 +2,8 @@
 // TODO remove right chart labels if not used
 // TODO white background for downloaded chart
 
+import Chart from './Chart.bundle.min.js';
+
 const COUNTRIES = [];
 const SLOVAK_POPULATION = 5435343;
 
@@ -196,4 +198,24 @@ const collapseClick = function collapseClick(event) { // eslint-disable-line no-
   } else {
     content.style.display = 'block';
   }
+};
+
+window.onload = function () {
+  ['total', 'daily'].forEach((type) => {
+    const daily = type === 'daily';
+    const chart = new Chart(document.getElementById(`canvas-${type}`).getContext('2d'), createConfig(daily));
+    document.getElementById(`config-${type}`).addEventListener('click', collapseClick);
+    document.getElementById(`download-${type}`).addEventListener('click', (event) => {
+      event.target.href = chart.toBase64Image();
+    });
+    // checkboxes
+    const panel = document.getElementById(`config-${type}-panel`);
+    generateCheckboxes(type).forEach((element) => {
+      panel.appendChild(element);
+      if (element.tagName === 'INPUT') {
+        element.addEventListener('click', (event) => checkboxClick(event, chart, daily));
+      }
+    });
+  });
+
 };
