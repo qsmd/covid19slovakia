@@ -4,8 +4,8 @@
 
 // eslint-disable-next-line no-unused-vars
 import * as chartjs from './Chart.bundle.min.js'; // eslint-disable-line import/extensions
-import * as util from './util.js';
-import ChartConfig from './ChartConfig.js';
+import * as util from './util.js'; // eslint-disable-line import/extensions
+import ChartConfig from './ChartConfig.js'; // eslint-disable-line import/extensions
 
 window.onload = function () {
   ['total', 'daily'].forEach((type) => {
