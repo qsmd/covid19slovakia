@@ -61,13 +61,9 @@ export default class ChartConfig {
   checkboxClick(event, chart, daily) {
     if (event.target.checked) {
       const country = util.getCountry(event.target.value);
-      console.log(`### 111 ${country[0]}`);
-      
       if (country) {
         this.getCountryDatasets(daily, country).forEach((dataset) => {
           if (event.target.value === dataset.label) {
-            console.log(`### 222 ${dataset.data}`);
-            
             chart.data.datasets.push(dataset);
           }
         });
