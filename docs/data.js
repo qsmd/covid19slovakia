@@ -25,5 +25,4 @@ window.onload = function () {
       }
     });
   });
-
 };
