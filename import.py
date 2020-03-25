@@ -41,8 +41,8 @@ def process_file():
                 header = row
             if row[0] == '' and row[1] in COUNTRIES:
                 idx, days = get_days(row)
-                print(f"['{COUNTRIES[row[1]]}','{row[1]}','{date_sk(header[idx])}',{','.join(days)}],")
+                print(f"  ['{COUNTRIES[row[1]]}','{row[1]}','{date_sk(header[idx])}',{','.join(days)}],")
 
-print('COUNTRIES = [')
+print('const COUNTRIES = [')
 process_file()
-print(']')
+print('];')
