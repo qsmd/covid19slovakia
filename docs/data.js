@@ -2,21 +2,30 @@
 // TODO remove right chart labels if not used
 // TODO white background for downloaded chart
 
-import Chart from './Chart.bundle.min.js';
+// eslint-disable-next-line import/extensions
+import * as chart from './Chart.bundle.min.js'; // eslint-disable-line no-unused-vars
 
-const COUNTRIES = [];
+/* eslint-disable import/extensions */
+import AT from './data/austria.js';
+import CZ from './data/czechia.js';
+import DE from './data/germany.js';
+import HU from './data/hungary.js';
+import IT from './data/italy.js';
+import PL from './data/poland.js';
+import SK from './data/slovakia.js';
+import ES from './data/spain.js';
+
+const COUNTRIES = [SK, CZ, AT, DE, HU, IT, PL, ES];
 const SLOVAK_POPULATION = 5435343;
 
-window.chartColors = {
-  SK: '#36a2eb',
-  CZ: '#ff6384',
-  AT: '#ffa600',
-  DE: '#ff7c43',
-  HU: '#d45087',
-  IT: '#a05195',
-  PL: '#665191',
-  ES: '#2f4b7c',
-};
+SK.color = '#36a2eb';
+CZ.color = '#ff6384';
+AT.color = '#ffa600';
+DE.color = '#ff7c43';
+HU.color = '#d45087';
+IT.color = '#a05195';
+PL.color = '#665191';
+ES.color = '#2f4b7c';
 
 function getDefaultPeriod() {
   let max = 0;

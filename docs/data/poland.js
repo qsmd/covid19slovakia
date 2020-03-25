@@ -1,7 +1,7 @@
-COUNTRIES.push({ // eslint-disable-line no-undef
+const DATA = {
   name: 'PL',
   population: 37972964,
-  color: window.chartColors.PL,
+  color: '',
   data: [
     ['4.3.2020', 1, ],
     ['5.3.2020', 1, ],
@@ -25,4 +25,5 @@ COUNTRIES.push({ // eslint-disable-line no-undef
     ['23.3.2020', 634, ],
     ['24.3.2020', 749, ],
   ],
-});
+};
+export default DATA;

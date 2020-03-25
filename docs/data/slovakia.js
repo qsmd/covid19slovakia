@@ -2,10 +2,10 @@
 // Test source: http://www.uvzsr.sk
 // Date increased by 1 to match WHO reporting.
 
-COUNTRIES.push({ // eslint-disable-line no-undef
+const DATA = {
   name: 'SK',
   population: 5435343,
-  color: window.chartColors.SK,
+  color: '',
   tests: true,
   default: true,
   data: [
@@ -29,4 +29,5 @@ COUNTRIES.push({ // eslint-disable-line no-undef
     ['24.3.2020', 204, 3940],
     ['25.3.2020', 216, 4256],
   ],
-});
+};
+export default DATA;

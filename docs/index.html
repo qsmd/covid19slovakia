@@ -2,7 +2,6 @@
 <html>
 
 <head>
-	<!-- Global site tag (gtag.js) - Google Analytics -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-2124376-28"></script>
 	<script>
 		window.dataLayer = window.dataLayer || [];
@@ -13,44 +12,8 @@
 	</script>
 	<meta charset="UTF-8">
 	<title>COVID-19 Porovnaj Slovensko</title>
-	<script type="module" src="Chart.bundle.min.js"></script>
 	<script type="module" src="data.js"></script>
-	<script src="data/slovakia.js"></script>
-	<script src="data/hungary.js"></script>
-	<script src="data/austria.js"></script>
-	<script src="data/czechia.js"></script>
-	<script src="data/poland.js"></script>
-	<script src="data/spain.js"></script>
-	<script src="data/germany.js"></script>
-	<script src="data/italy.js"></script>
-	<style>
-		canvas {
-			-moz-user-select: none;
-			-webkit-user-select: none;
-			-ms-user-select: none;
-		}
-		.checkboxes {
-			padding: 1em;
-			margin-left: 2em;
-			margin-right: 2em;
-		}
-		.config {
-			display: none;
-			overflow: hidden;
-			padding: 1em;
-			margin-left: 4em;
-			margin-right: 4em;
-			background-color: #eee;
-			border: solid thin #ccc;
-		}
-		.chart-panel {
-			padding-top: 2em;
-		}
-		a {color:#0000FF;}
-		a:visited {color:#0000FF;}
-		a:hover {color:#0000FF;}
-		a:active {color:#0000FF;}
-	</style>
+	<link rel="stylesheet" href="style.css">
 	<meta property="og:title" content="COVID-19 Porovnaj Slovensko">
 	<meta property="og:image" content="https://qsmd.github.io/covid19slovakia/slovensko-susedia-denne.png">
 	<meta property="og:description" content="Slovensko a susedia denne">
@@ -62,7 +25,7 @@
 	<meta name="twitter:card" content="summary_large_image">
 </head>
 
-<body style="font-family: Arial, Helvetica, sans-serif;">
+<body>
 	<a href="https://github.com/qsmd/covid19slovakia" class="github-corner" aria-label="View source on Github">
 		<svg width="80" height="80" viewBox="0 0 250 250"
 			style="fill:#0080ec; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true">

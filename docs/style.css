@@ -1,0 +1,37 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;    
+}
+canvas {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+.checkboxes {
+    padding: 1em;
+    margin-left: 2em;
+    margin-right: 2em;
+}
+.config {
+    display: none;
+    overflow: hidden;
+    padding: 1em;
+    margin-left: 4em;
+    margin-right: 4em;
+    background-color: #eee;
+    border: solid thin #ccc;
+}
+.chart-panel {
+    padding-top: 2em;
+}
+a {
+    color:#0000FF;
+}
+a:visited {
+    color:#0000FF;
+}
+a:hover {
+    color:#0000FF;
+}
+a:active {
+    color:#0000FF;
+}

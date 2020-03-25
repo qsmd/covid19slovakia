@@ -1,7 +1,7 @@
-COUNTRIES.push({ // eslint-disable-line no-undef
+const DATA = {
   name: 'UK',
   population: 67545757,
-  color: '#dddddd',
+  color: '',
   data: [
     ['19.3.2020', 2630, ],
     ['20.3.2020', 3277, ],
@@ -10,4 +10,5 @@ COUNTRIES.push({ // eslint-disable-line no-undef
     ['23.3.2020', 5687, ],
     ['24.3.2020', 6654, ],
   ],
-});
+};
+export default DATA;

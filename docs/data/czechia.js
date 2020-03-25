@@ -2,10 +2,10 @@
 // Date increased by 1 to match WHO reporting.
 // Official Czech stats do not match those of WHO, though. There is a small difference.
 
-COUNTRIES.push({ // eslint-disable-line no-undef
+const DATA = {
   name: 'CZ',
   population: 10578820,
-  color: window.chartColors.CZ,
+  color: '',
   tests: true,
   default: true,
   data: [
@@ -34,4 +34,5 @@ COUNTRIES.push({ // eslint-disable-line no-undef
     ['23.3.2020', 1287, 19624],
     ['24.3.2020', 1472, 22600],
   ],
-});
+};
+export default DATA;
