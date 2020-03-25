@@ -1,13 +1,16 @@
 import csv
 
-INDEX_FIRST_DAY = 4
-
-watched_countries = {'Slovakia', 'Czechia', 'United Kingdom'}
+TIMELINE_IDX = 4
+COUNTRIES = {
+    'Slovakia': 'SK',
+    'Czechia': 'CZ',
+    'United Kingdom': 'UK'
+}
 
 def get_nonzero_idx(days):
-    for index, day in enumerate(days[INDEX_FIRST_DAY:]):
-        if day != '0':
-            return INDEX_FIRST_DAY + index
+    for index, day in enumerate(days[TIMELINE_IDX:]):
+        if eval(day) > 0:
+            return TIMELINE_IDX + index
 
 def get_days(days):
     nonzero_idx = get_nonzero_idx(days)
@@ -27,9 +30,9 @@ def process_file():
         for row in rows:
             if header is None:
                 header = row
-            if row[0] == '' and row[1] in watched_countries:
+            if row[0] == '' and row[1] in COUNTRIES:
                 idx, days = get_days(row)
-                print(f"['{row[1]}','{date_sk(header[idx])}',{','.join(days)}],")
+                print(f"['{COUNTRIES[row[1]]}','{row[1]}','{date_sk(header[idx])}',{','.join(days)}],")
 
 print('COUNTRIES = [')
 process_file()
