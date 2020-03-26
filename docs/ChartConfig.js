@@ -19,13 +19,14 @@ export default class ChartConfig {
     this.defaults = type.includes('-tests') ? util.DEFAULT_TESTS : util.DEFAULT_CASES;
     this.checkboxes = [];
     this.testDaysToInclude = {};
+    this.countryColors = {};
   }
 
   getCountryDatasets(daily, country) {
     const datasets = [];
     const countryDataset = util.countryToDataset(daily, country, this.countries, this.defaults, this.testDaysToInclude[country[0]]);
-    const color = this.colors.shift();
     if (country[0].includes('testy')) {
+      const color = this.countryColors[`${country[0]}`];
       datasets.push({
         label: country[0],
         backgroundColor: `${color}33`,
@@ -35,6 +36,7 @@ export default class ChartConfig {
         fill: false,
       });
     } else {
+      const color = this.colors.shift();
       datasets.push({
         label: country[0],
         backgroundColor: color,
@@ -44,9 +46,9 @@ export default class ChartConfig {
         fill: false,
       });
       this.testDaysToInclude[`${country[0]}-testy`] = countryDataset.length;
+      this.countryColors[`${country[0]}-testy`] = color;
       console.log(`### getCountryDatasets 222 ${country[0]}, ${country[0]}-testy, ${this.testDaysToInclude[`${country[0]}-testy`]}`);
     }
-    
     return datasets;
   }
 
