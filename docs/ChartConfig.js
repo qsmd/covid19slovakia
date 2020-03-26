@@ -25,8 +25,11 @@ export default class ChartConfig {
   getCountryDatasets(daily, country) {
     const datasets = [];
     const countryDataset = util.countryToDataset(daily, country, this.countries, this.defaults, this.testDaysToInclude[country[0]]);
+    let color = this.countryColors[`${country[0].split('-')[0]}`];
+    if (!color) {
+      color = this.colors.shift();
+    }
     if (country[0].includes('testy')) {
-      const color = this.countryColors[`${country[0]}`];
       datasets.push({
         label: country[0],
         backgroundColor: `${color}33`,
@@ -36,7 +39,6 @@ export default class ChartConfig {
         fill: false,
       });
     } else {
-      const color = this.colors.shift();
       datasets.push({
         label: country[0],
         backgroundColor: color,
@@ -46,7 +48,7 @@ export default class ChartConfig {
         fill: false,
       });
       this.testDaysToInclude[`${country[0]}-testy`] = countryDataset.length;
-      this.countryColors[`${country[0]}-testy`] = color;
+      this.countryColors[`${country[0]}`] = color;
       console.log(`### getCountryDatasets 222 ${country[0]}, ${country[0]}-testy, ${this.testDaysToInclude[`${country[0]}-testy`]}`);
     }
     return datasets;
@@ -80,6 +82,8 @@ export default class ChartConfig {
   checkboxClick(event, daily, chart) {
     if (event.target.checked) {
       const country = util.getCountry(this.countries, event.target.value);
+      console.log(`### checkboxClick ${event.target.value}, ${country}`);
+      
       if (country) {
         this.getCountryDatasets(daily, country).forEach((dataset) => {
           if (event.target.value === dataset.label) {

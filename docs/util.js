@@ -42,7 +42,7 @@ export function getLongestPeriod(datasets) {
 export function getCountry(countries, countryName) {
   let result;
   countries.forEach((country) => {
-    if (country[0] === countryName.split('-')[0]) {
+    if (country[0] === countryName) {
       result = country;
     }
   });
