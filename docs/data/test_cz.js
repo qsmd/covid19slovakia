@@ -1,5 +1,5 @@
 const CZ = [
-  'CZ',
+  'CZ-testy',
   'Czechia',
   '1.3.20',
   211,

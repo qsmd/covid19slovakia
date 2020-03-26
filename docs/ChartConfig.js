@@ -18,20 +18,35 @@ export default class ChartConfig {
     this.countries = type.includes('-tests') ? TESTS : CASES;
     this.defaults = type.includes('-tests') ? util.DEFAULT_TESTS : util.DEFAULT_CASES;
     this.checkboxes = [];
+    this.testDaysToInclude = {};
   }
 
   getCountryDatasets(daily, country) {
     const datasets = [];
-    const countryDatasets = util.countryToDatasets(daily, country, this.countries, this.defaults);
+    const countryDataset = util.countryToDataset(daily, country, this.countries, this.defaults, this.testDaysToInclude[country[0]]);
     const color = this.colors.shift();
-    datasets.push({
-      label: country[0],
-      backgroundColor: color,
-      borderColor: color,
-      data: countryDatasets,
-      yAxisID: 'left-y-axis',
-      fill: false,
-    });
+    if (country[0].includes('testy')) {
+      datasets.push({
+        label: country[0],
+        backgroundColor: `${color}33`,
+        borderColor: `${color}33`,
+        data: countryDataset,
+        yAxisID: 'right-y-axis',
+        fill: false,
+      });
+    } else {
+      datasets.push({
+        label: country[0],
+        backgroundColor: color,
+        borderColor: color,
+        data: countryDataset,
+        yAxisID: 'left-y-axis',
+        fill: false,
+      });
+      this.testDaysToInclude[`${country[0]}-testy`] = countryDataset.length;
+      console.log(`### getCountryDatasets 222 ${country[0]}, ${country[0]}-testy, ${this.testDaysToInclude[`${country[0]}-testy`]}`);
+    }
+    
     return datasets;
   }
 

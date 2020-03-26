@@ -1,5 +1,5 @@
 export const DEFAULT_CASES = ['SK', 'CZ', 'AT'];
-export const DEFAULT_TESTS = ['SK', 'CZ'];
+export const DEFAULT_TESTS = ['SK', 'SK-testy', 'CZ', 'CZ-testy'];
 
 const MINIMUM_CASES = 2;
 const SLOVAK_POPULATION = 5435343;
@@ -49,25 +49,40 @@ export function getCountry(countries, countryName) {
   return result;
 }
 
-export function countryToDatasets(daily, country, countries, defaults) {
-  const multiplier = SLOVAK_POPULATION / POPULATION[country[0]];
-  const datasets = [];
+export function countryToDataset(daily, country, countries, defaults, testDaysToInclude) {
+  const countryNameWithoutTest = country[0].split('-')[0];
+  const multiplier = SLOVAK_POPULATION / POPULATION[countryNameWithoutTest];
+  const dataset = [];
   let applicableDays = 0;
-  let lastTotalCases = 0;
+  let lastTotal = 0;
   const maxDays = getDefaultPeriod(countries, defaults);
 
-  country.slice(3).forEach((day) => {
-    const relativeCasesDailyOrTotal = ((day - lastTotalCases) * multiplier).toFixed(2);
-    const relativeCasesTotal = (day * multiplier).toFixed(2);
-    if (maxDays > applicableDays && relativeCasesTotal >= MINIMUM_CASES) {
-      applicableDays += 1;
+  if (testDaysToInclude) {
+    country.slice(country.length - testDaysToInclude).forEach((day) => {
+      const relativeDailyOrTotal = ((day - lastTotal) * multiplier).toFixed(2);
       if (daily) {
-        lastTotalCases = day;
+        lastTotal = day;
       }
-      datasets.push(relativeCasesDailyOrTotal);
-    }
-  });
-  return datasets;
+      dataset.push(relativeDailyOrTotal);
+    });
+  } else {
+    country.slice(3).forEach((day) => {
+      const relativeDailyOrTotal = ((day - lastTotal) * multiplier).toFixed(2);
+      const relativeTotal = (day * multiplier).toFixed(2);
+      if (maxDays > applicableDays && relativeTotal >= MINIMUM_CASES) {
+        applicableDays += 1;
+        if (daily) {
+          lastTotal = day;
+        }
+        dataset.push(relativeDailyOrTotal);
+      }
+    });
+  }
+
+  console.log(`### countryToDataset country [${testDaysToInclude}] ${country}`);
+  console.log(`### countryToDataset dataset [${dataset.length}] ${dataset}`);
+
+  return dataset;
 }
 
 const X_AXE = {
@@ -90,17 +105,17 @@ function yAxeLeft(daily) {
   };
 }
 
-// function yAxeRight(daily) {
-//   return {
-//     id: 'right-y-axis',
-//     display: true,
-//     position: 'right',
-//     scaleLabel: {
-//       display: true,
-//       labelString: `${(daily ? 'Denný' : 'Celkový')} počet testov / počet obyvateľov Slovenska`,
-//     },
-//   };
-// }
+function yAxeRight(daily) {
+  return {
+    id: 'right-y-axis',
+    display: true,
+    position: 'right',
+    scaleLabel: {
+      display: true,
+      labelString: `${(daily ? 'Denný' : 'Celkový')} počet testov / počet obyvateľov Slovenska`,
+    },
+  };
+}
 
 export function createConfig(chartConfig) {
   const daily = chartConfig.type.includes('daily-');
@@ -123,7 +138,7 @@ export function createConfig(chartConfig) {
       tooltips: { mode: 'index', intersect: false },
       hover: { mode: 'nearest', intersect: true },
       animation: { duration: 0 },
-      scales: { xAxes: [X_AXE], yAxes: [yAxeLeft(daily), /*yAxeRight(daily)*/] },
+      scales: { xAxes: [X_AXE], yAxes: [yAxeLeft(daily), yAxeRight(daily)] },
     },
   };
 }

@@ -1,5 +1,5 @@
 const SK = [
-  'SK',
+  'SK-testy',
   'Slovakia',
   '6.3.20',
   308,

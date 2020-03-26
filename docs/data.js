@@ -8,8 +8,9 @@ import * as util from './util.js'; // eslint-disable-line import/extensions
 import ChartConfig from './ChartConfig.js'; // eslint-disable-line import/extensions
 
 window.onload = function () {
-  ['total-cases', 'daily-cases', 'total-tests', 'daily-tests'].forEach((type) => {
-    const daily = type.includes('daily');
+  // ['total-cases', 'daily-cases', 'total-tests', 'daily-tests'].forEach((type) => {
+  ['total-tests'].forEach((type) => {
+      const daily = type.includes('daily');
     const chartConfig = new ChartConfig(type);
     const chart = new Chart(document.getElementById(`canvas-${type}`).getContext('2d'), util.createConfig(chartConfig));
     document.getElementById(`config-${type}`).addEventListener('click', () => { chartConfig.collapseClick(); });
