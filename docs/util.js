@@ -49,7 +49,7 @@ export function getCountry(countries, countryName) {
   return result;
 }
 
-export function countryToDataset(daily, country, countries, defaults, testDaysToInclude) {
+export function createTimeline(daily, country, countries, defaults, testDaysToInclude) {
   const countryNameWithoutTest = country[0].split('-')[0];
   const multiplier = SLOVAK_POPULATION / POPULATION[countryNameWithoutTest];
   const dataset = [];
@@ -78,9 +78,6 @@ export function countryToDataset(daily, country, countries, defaults, testDaysTo
       }
     });
   }
-
-  console.log(`### countryToDataset country [${testDaysToInclude}] ${country}`);
-  console.log(`### countryToDataset dataset [${dataset.length}] ${dataset}`);
 
   return dataset;
 }
@@ -122,7 +119,7 @@ export function createConfig(chartConfig) {
   const datasets = [];
   chartConfig.countries.forEach((country) => {
     if (chartConfig.defaults.includes(country[0])) {
-      datasets.push(...chartConfig.getCountryDatasets(daily, country));
+      datasets.push(chartConfig.getChartjsDataset(daily, country));
     }
   });
 

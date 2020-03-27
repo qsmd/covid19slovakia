@@ -18,40 +18,39 @@ export default class ChartConfig {
     this.countries = type.includes('-tests') ? TESTS : CASES;
     this.defaults = type.includes('-tests') ? util.DEFAULT_TESTS : util.DEFAULT_CASES;
     this.checkboxes = [];
-    this.testDaysToInclude = {};
+    this.validDays = {};
     this.countryColors = {};
   }
 
-  getCountryDatasets(daily, country) {
-    const datasets = [];
-    const countryDataset = util.countryToDataset(daily, country, this.countries, this.defaults, this.testDaysToInclude[country[0]]);
+  getChartjsDataset(daily, country) {
+    let dataset;
+    const timeline = util.createTimeline(daily, country, this.countries, this.defaults, this.validDays[country[0]]);
     let color = this.countryColors[`${country[0].split('-')[0]}`];
     if (!color) {
       color = this.colors.shift();
     }
     if (country[0].includes('testy')) {
-      datasets.push({
+      dataset = {
         label: country[0],
         backgroundColor: `${color}33`,
         borderColor: `${color}33`,
-        data: countryDataset,
+        data: timeline,
         yAxisID: 'right-y-axis',
         fill: false,
-      });
+      };
     } else {
-      datasets.push({
+      dataset = {
         label: country[0],
         backgroundColor: color,
         borderColor: color,
-        data: countryDataset,
+        data: timeline,
         yAxisID: 'left-y-axis',
         fill: false,
-      });
-      this.testDaysToInclude[`${country[0]}-testy`] = countryDataset.length;
+      };
+      this.validDays[`${country[0]}-testy`] = timeline.length;
       this.countryColors[`${country[0]}`] = color;
-      console.log(`### getCountryDatasets 222 ${country[0]}, ${country[0]}-testy, ${this.testDaysToInclude[`${country[0]}-testy`]}`);
     }
-    return datasets;
+    return dataset;
   }
 
   disableUnchecked() {
@@ -82,14 +81,11 @@ export default class ChartConfig {
   checkboxClick(event, daily, chart) {
     if (event.target.checked) {
       const country = util.getCountry(this.countries, event.target.value);
-      console.log(`### checkboxClick ${event.target.value}, ${country}`);
-      
       if (country) {
-        this.getCountryDatasets(daily, country).forEach((dataset) => {
-          if (event.target.value === dataset.label) {
-            chart.data.datasets.push(dataset);
-          }
-        });
+        const dataset = this.getChartjsDataset(daily, country);
+        if (event.target.value === dataset.label) {
+          chart.data.datasets.push(dataset);
+        }
       }
       if (this.colors.length === 0) {
         this.disableUnchecked();
