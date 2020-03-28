@@ -48,60 +48,61 @@ export default class ChartConfig {
 
   // 'private' methods
 
-  _createCasesTimeline(country) {
-    const timeline = [];
-    const multiplier = SLOVAK_POPULATION / POPULATION[country.name];
+  _createCasesDaysForAnyTimeline(timeline) {
+    const days = [];
+    const multiplier = SLOVAK_POPULATION / POPULATION[timeline.name];
     let yesterday = 0;
 
-    country.days.forEach((day) => {
+    const casesTimeline = this._getCountryById(timeline.id.split('-')[0]);
+    casesTimeline.days.forEach((day) => {
       const normalizedDay = day * multiplier;
       if (normalizedDay >= MINIMUM_CASES) {
         const normalizedValue = ((day - yesterday) * multiplier).toFixed(2);
-        timeline.push(normalizedValue);
+        days.push(normalizedValue);
         if (this.isDaily) {
           yesterday = day;
         }
       }
     });
 
-    return timeline;
+    return days;
   }
 
-  _createTestsTimeline(country, validDays) {
-    const timeline = [];
-    const multiplier = SLOVAK_POPULATION / POPULATION[country.name];
+  _createTestsDays(timeline, validDays) {
+    const days = [];
+    const multiplier = SLOVAK_POPULATION / POPULATION[timeline.name];
     let yesterday = 0;
 
-    country.days.slice(country.days.length - validDays).forEach((day) => {
+    timeline.days.slice(timeline.days.length - validDays).forEach((day) => {
       const normalizedValue = ((day - yesterday) * multiplier).toFixed(2);
-      timeline.push(normalizedValue);
+      days.push(normalizedValue);
       if (this.isDaily) {
         yesterday = day;
       }
     });
 
-    return timeline;
+    return days;
   }
 
-  _createChartjsDataset(country) {
-    let color = this.countryNameToColor[`${country.name}`];
+  _createChartjsDataset(timeline) {
+    let color = this.countryNameToColor[`${timeline.name}`];
     if (!color) {
       color = this.colors.shift();
-      this.countryNameToColor[`${country.name}`] = color;
+      this.countryNameToColor[`${timeline.name}`] = color;
     }
-    if (util.isTest(country)) {
+    if (util.isTest(timeline)) {
       color = `${color}33`;
     }
-    let timeline = this._createCasesTimeline(country);
+    let days = this._createCasesDaysForAnyTimeline(timeline);
     if (this.isTests) {
-      timeline = this._createCasesTimeline(country, timeline.length);
+      days = this._createTestsDays(timeline, days.length);
     }
 
     return {
-      label: country.id,
+      label: timeline.id,
       backgroundColor: color,
       borderColor: color,
-      data: timeline,
+      data: days,
       yAxisID: 'left-y-axis',
       fill: false,
     };

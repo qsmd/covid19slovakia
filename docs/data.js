@@ -9,7 +9,7 @@ import ChartConfig from './ChartConfig.js'; // eslint-disable-line import/extens
 
 window.onload = function () {
   ['total-cases', 'daily-cases', 'total-tests', 'daily-tests'].forEach((canvasId) => {
-  // ['total-cases'].forEach((canvasId) => {
+  // ['total-tests'].forEach((canvasId) => {
     const chartConfig = new ChartConfig(canvasId);
     const chart = new Chart(document.getElementById(`canvas-${canvasId}`).getContext('2d'), chartConfig.createConfig());
     document.getElementById(`config-${canvasId}`).addEventListener('click', () => { chartConfig.collapseClick(); });
