@@ -5,6 +5,6 @@ import CZ_CASES from './timeline_cz.js'; // eslint-disable-line import/extension
 
 /* eslint-disable comma-spacing */
 const TESTS = [
-  SK_CASES, CZ_CASES, SK_TESTS, CZ_TESTS,
+  SK_CASES, SK_TESTS, CZ_CASES, CZ_TESTS,
 ];
 export default TESTS;

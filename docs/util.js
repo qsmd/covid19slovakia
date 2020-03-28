@@ -1,5 +1,5 @@
-export const DEFAULT_CASES = ['SK', 'CZ', 'AT'];
-export const DEFAULT_TESTS = ['SK', 'SK-testy', 'CZ', 'CZ-testy'];
+export const DEFAULT_CASES = ['sk', 'cz', 'at'];
+export const DEFAULT_TESTS = ['sk', 'sk-tests', 'cz', 'cz-tests'];
 
 // default is mandatory, so I created unneeded version property for that
 const version = '0.1';
@@ -15,14 +15,8 @@ export function getLongestPeriod(datasets) {
   return max;
 }
 
-export function getCountry(countries, countryName) {
-  let result;
-  countries.forEach((country) => {
-    if (country[0] === countryName) {
-      result = country;
-    }
-  });
-  return result;
+export function isTest(country) {
+  return country.id.includes('tests');
 }
 
 export function yAxeLeft(daily) {

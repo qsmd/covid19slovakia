@@ -6,15 +6,15 @@ import * as util from './util.js'; // eslint-disable-line import/extensions
 const MINIMUM_CASES = 2;
 const SLOVAK_POPULATION = 5435343;
 const POPULATION = {
-  AT: 8772865,
-  CZ: 10578820,
-  DE: 82521653,
-  ES: 46528966,
-  HU: 9772756,
-  IT: 60589445,
-  PL: 37972964,
-  SK: 5435343,
-  NO: 5367580,
+  Austria: 8772865,
+  Czechia: 10578820,
+  Germany: 82521653,
+  Spain: 46528966,
+  Hungary: 9772756,
+  Italy: 60589445,
+  Poland: 37972964,
+  Slovakia: 5435343,
+  Norway: 5367580,
 };
 
 const _X_AXE = {
@@ -26,8 +26,7 @@ const _X_AXE = {
 };
 
 export default class ChartConfig {
-
-  constructor(type) {
+  constructor(canvasId) {
     this.colors = [
       '#36a2eb',
       '#ff6384',
@@ -38,89 +37,74 @@ export default class ChartConfig {
       '#a05195',
       '#665191',
     ];
-    this.type = type;
-    this.countries = type.includes('-tests') ? TESTS : CASES;
-    this.defaults = type.includes('-tests') ? util.DEFAULT_TESTS : util.DEFAULT_CASES;
+    this.canvasId = canvasId;
+    this.isDaily = this.canvasId.includes('daily');
+    this.isTests = this.canvasId.includes('tests');
+    this.countries = this.isTests ? TESTS : CASES;
+    this.defaults = this.isTests ? util.DEFAULT_TESTS : util.DEFAULT_CASES;
     this.checkboxes = [];
-    this.labelToValidDays = {};
-    this.countryCodeToColor = {};
+    this.countryNameToColor = {};
   }
 
   // 'private' methods
 
-  _getDefaultPeriod() {
-    let max = 0;
-    this.countries.forEach((country) => {
-      if (this.defaults.includes(country[0]) && (country.length - 3) > max) {
-        max = country.length - 3;
+  _createCasesTimeline(country) {
+    const timeline = [];
+    const multiplier = SLOVAK_POPULATION / POPULATION[country.name];
+    let yesterday = 0;
+
+    country.days.forEach((day) => {
+      const normalizedDay = day * multiplier;
+      if (normalizedDay >= MINIMUM_CASES) {
+        const normalizedValue = ((day - yesterday) * multiplier).toFixed(2);
+        timeline.push(normalizedValue);
+        if (this.isDaily) {
+          yesterday = day;
+        }
       }
     });
-    return max;
+
+    return timeline;
   }
 
-  _createTimeline(daily, country) {
-    const countryNameWithoutTest = country[0].split('-')[0];
-    const multiplier = SLOVAK_POPULATION / POPULATION[countryNameWithoutTest];
-    const dataset = [];
-    let applicableDays = 0;
-    let lastTotal = 0;
-    const maxDays = this._getDefaultPeriod(this.countries, this.defaults);
+  _createTestsTimeline(country, validDays) {
+    const timeline = [];
+    const multiplier = SLOVAK_POPULATION / POPULATION[country.name];
+    let yesterday = 0;
 
-    const testDaysToInclude = this.labelToValidDays[country[0]];
-    if (testDaysToInclude) {
-      country.slice(country.length - testDaysToInclude).forEach((day) => {
-        const relativeDailyOrTotal = ((day - lastTotal) * multiplier).toFixed(2);
-        if (daily) {
-          lastTotal = day;
-        }
-        dataset.push(relativeDailyOrTotal);
-      });
-    } else {
-      country.slice(3).forEach((day) => {
-        const relativeDailyOrTotal = ((day - lastTotal) * multiplier).toFixed(2);
-        const relativeTotal = (day * multiplier).toFixed(2);
-        if (maxDays > applicableDays && relativeTotal >= MINIMUM_CASES) {
-          applicableDays += 1;
-          if (daily) {
-            lastTotal = day;
-          }
-          dataset.push(relativeDailyOrTotal);
-        }
-      });
-    }
+    country.days.slice(country.days.length - validDays).forEach((day) => {
+      const normalizedValue = ((day - yesterday) * multiplier).toFixed(2);
+      timeline.push(normalizedValue);
+      if (this.isDaily) {
+        yesterday = day;
+      }
+    });
 
-    return dataset;
+    return timeline;
   }
 
-  _createChartjsDataset(daily, country) {
-    let dataset;
-    const timeline = this._createTimeline(daily, country);
-    let color = this.countryCodeToColor[`${country[0].split('-')[0]}`];
+  _createChartjsDataset(country) {
+    let color = this.countryNameToColor[`${country.name}`];
     if (!color) {
       color = this.colors.shift();
+      this.countryNameToColor[`${country.name}`] = color;
     }
-    if (country[0].includes('testy')) {
-      dataset = {
-        label: country[0],
-        backgroundColor: `${color}33`,
-        borderColor: `${color}33`,
-        data: timeline,
-        yAxisID: 'right-y-axis',
-        fill: false,
-      };
-    } else {
-      dataset = {
-        label: country[0],
-        backgroundColor: color,
-        borderColor: color,
-        data: timeline,
-        yAxisID: 'left-y-axis',
-        fill: false,
-      };
-      this.labelToValidDays[`${country[0]}-testy`] = timeline.length;
-      this.countryCodeToColor[`${country[0]}`] = color;
+    if (util.isTest(country)) {
+      color = `${color}33`;
     }
-    return dataset;
+    let timeline = this._createCasesTimeline(country);
+    if (this.isTests) {
+      timeline = this._createCasesTimeline(country, timeline.length);
+    }
+
+    return {
+      label: country.id,
+      backgroundColor: color,
+      borderColor: color,
+      data: timeline,
+      yAxisID: 'left-y-axis',
+      fill: false,
+    };
   }
 
   _disableUnchecked() {
@@ -139,14 +123,23 @@ export default class ChartConfig {
     });
   }
 
+  _getCountryById(countryId) {
+    let result;
+    this.countries.forEach((country) => {
+      if (country.id === countryId) {
+        result = country;
+      }
+    });
+    return result;
+  }
+
   // 'public' methods
 
   createConfig() {
-    const daily = this.type.includes('daily-');
     const datasets = [];
     this.countries.forEach((country) => {
-      if (this.defaults.includes(country[0])) {
-        datasets.push(this._createChartjsDataset(daily, country));
+      if (this.defaults.includes(country.id)) {
+        datasets.push(this._createChartjsDataset(country));
       }
     });
 
@@ -162,7 +155,7 @@ export default class ChartConfig {
         tooltips: { mode: 'index', intersect: false },
         hover: { mode: 'nearest', intersect: true },
         animation: { duration: 0 },
-        scales: { xAxes: [_X_AXE], yAxes: [util.yAxeLeft(daily), util.yAxeRight(daily)] },
+        scales: { xAxes: [_X_AXE], yAxes: [util.yAxeLeft(this.isDaily), util.yAxeRight(this.isDaily)] },
       },
     };
   }
@@ -170,16 +163,16 @@ export default class ChartConfig {
   generateCheckboxes(type) {
     const nodes = [];
     this.countries.forEach((country) => {
-      const countryKeys = [country[0]];
+      const countryKeys = [country.id];
       if (country.tests) {
-        countryKeys.push(`${country[0]}-testy`);
+        countryKeys.push(`${country.id}-testy`);
       }
       countryKeys.forEach((countryKey) => {
         const input = document.createElement('input');
         input.setAttribute('type', 'checkbox');
         input.setAttribute('id', `${type}-${countryKey}`);
         input.setAttribute('value', countryKey);
-        input.checked = this.defaults.includes(country[0]);
+        input.checked = this.defaults.includes(country.id);
         nodes.push(input);
         nodes.push(document.createTextNode(`${countryKey} |\n`));
         this.checkboxes.push(input);
@@ -188,11 +181,11 @@ export default class ChartConfig {
     return nodes;
   }
 
-  checkboxClick(event, daily, chart) {
+  checkboxClick(event, chart) {
     if (event.target.checked) {
-      const country = util.getCountry(this.countries, event.target.value);
+      const country = this._getCountryById(event.target.value);
       if (country) {
-        const dataset = this._createChartjsDataset(daily, country);
+        const dataset = this._createChartjsDataset(country);
         if (event.target.value === dataset.label) {
           chart.data.datasets.push(dataset);
         }
@@ -216,7 +209,7 @@ export default class ChartConfig {
   }
 
   collapseClick() {
-    const content = document.getElementById(`panel-${this.type}`);
+    const content = document.getElementById(`panel-${this.canvasId}`);
     if (content.style.display === 'block') {
       content.style.display = 'none';
     } else {
