@@ -22,6 +22,9 @@ const SK = {
     185,
     204,
     216,
+    226,
+    269,
+    292,
   ],
 };
 export default SK;
