@@ -15,16 +15,8 @@ export function getLongestPeriod(datasets) {
   return max;
 }
 
-export function isTest(country) {
-  return country.id.includes('tests');
-}
-
-export function getTimelineType(timeline) {
-  const idParts = timeline.id.split('-');
-  if (idParts.length === 1) {
-    return 'cases';
-  }
-  return `${idParts[1]}`;
+export function isRightYAxis(timeline) {
+  return timeline.id.includes('tests');
 }
 
 export function yAxeLeft(id, daily) {

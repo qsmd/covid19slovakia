@@ -17,6 +17,8 @@ const POPULATION = {
   Norway: 5367580,
 };
 
+const _LEFT_Y = 'left-y-axis';
+const _RIGHT_Y = 'right-y-axis';
 const _X_AXE = {
   display: true,
   scaleLabel: {
@@ -39,36 +41,30 @@ export default class ChartConfig {
     ];
     this.canvasId = canvasId;
     this.isDaily = this.canvasId.includes('daily');
-    this.isTests = this.canvasId.includes('tests');
-    this.countries = this.isTests ? TESTS : CASES;
-    this.defaults = this.isTests ? util.DEFAULT_TESTS : util.DEFAULT_CASES;
+    const useTestTimelines = this.canvasId.includes('tests');
+    this.countries = useTestTimelines ? TESTS : CASES;
+    this.defaults = useTestTimelines ? util.DEFAULT_TESTS : util.DEFAULT_CASES;
     this.checkboxes = [];
     this.countryNameToColor = {};
   }
 
   // 'private' methods
 
-  _createCasesDaysForAnyTimeline(timeline) {
-    const days = [];
+  _getValidDaysCount(timeline) {
     const multiplier = SLOVAK_POPULATION / POPULATION[timeline.name];
-    let yesterday = 0;
-
+    let invalidDaysCount = 0;
     const casesTimeline = this._getCountryById(timeline.id.split('-')[0]);
-    casesTimeline.days.forEach((day) => {
-      const normalizedDay = day * multiplier;
-      if (normalizedDay >= MINIMUM_CASES) {
-        const normalizedValue = ((day - yesterday) * multiplier).toFixed(2);
-        days.push(normalizedValue);
-        if (this.isDaily) {
-          yesterday = day;
-        }
+    casesTimeline.days.some((day) => {
+      if (day * multiplier >= MINIMUM_CASES) {
+        return true;
       }
+      invalidDaysCount += 1;
+      return false;
     });
-
-    return days;
+    return timeline.days.length - invalidDaysCount;
   }
 
-  _createTestsDays(timeline, validDays) {
+  _createNormalizedNoncaseDays(timeline, validDays) {
     const days = [];
     const multiplier = SLOVAK_POPULATION / POPULATION[timeline.name];
     let yesterday = 0;
@@ -90,31 +86,27 @@ export default class ChartConfig {
       color = this.colors.shift();
       this.countryNameToColor[`${timeline.name}`] = color;
     }
-    if (util.isTest(timeline)) {
+    const isRightYAxis = util.isRightYAxis(timeline);
+    if (isRightYAxis) {
       color = `${color}33`;
     }
-    let days = this._createCasesDaysForAnyTimeline(timeline);
-    if (this.isTests) {
-      days = this._createTestsDays(timeline, days.length);
-    }
-    const timelineType = util.getTimelineType(timeline);
+    const validDays = this._getValidDaysCount(timeline);
+    const days = this._createNormalizedNoncaseDays(timeline, validDays);
 
     return {
       label: timeline.id,
       backgroundColor: color,
       borderColor: color,
       data: days,
-      yAxisID: timelineType === 'tests' ? `right-y-axis-${timeline}` : `left-y-axis-${timeline}`,
+      yAxisID: isRightYAxis ? _RIGHT_Y : _LEFT_Y,
       fill: false,
     };
   }
 
   _createYAxes(timeline) {
-    const timelineType = util.getTimelineType(timeline);
-    if (timelineType === 'tests') {
-      return util.yAxeRight(`right-y-axis-${timeline}`, this.isDaily);
-    }
-    return util.yAxeLeft(`left-y-axis-${timeline}`, this.isDaily);
+    return util.isRightYAxis(timeline)
+      ? util.yAxeRight(_RIGHT_Y, this.isDaily)
+      : util.yAxeLeft(_LEFT_Y, this.isDaily);
   }
 
   _disableUnchecked() {
@@ -179,20 +171,14 @@ export default class ChartConfig {
   generateCheckboxes(type) {
     const nodes = [];
     this.countries.forEach((country) => {
-      const countryKeys = [country.id];
-      if (country.tests) {
-        countryKeys.push(`${country.id}-testy`);
-      }
-      countryKeys.forEach((countryKey) => {
-        const input = document.createElement('input');
-        input.setAttribute('type', 'checkbox');
-        input.setAttribute('id', `${type}-${countryKey}`);
-        input.setAttribute('value', countryKey);
-        input.checked = this.defaults.includes(country.id);
-        nodes.push(input);
-        nodes.push(document.createTextNode(`${countryKey} |\n`));
-        this.checkboxes.push(input);
-      });
+      const input = document.createElement('input');
+      input.setAttribute('type', 'checkbox');
+      input.setAttribute('id', `${type}-${country.id}`);
+      input.setAttribute('value', country.id);
+      input.checked = this.defaults.includes(country.id);
+      nodes.push(input);
+      nodes.push(document.createTextNode(`${country.id} |\n`));
+      this.checkboxes.push(input);
     });
     return nodes;
   }
