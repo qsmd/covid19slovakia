@@ -1,4 +1,4 @@
-export const DEFAULT_CASES = ['sk', 'cz', 'at'];
+export const DEFAULT_CASES = ['sk', 'cz', 'at', 'hu', 'pl'];
 export const DEFAULT_TESTS = ['sk', 'sk-tests', 'cz', 'cz-tests'];
 
 // default is mandatory, so I created unneeded version property for that
