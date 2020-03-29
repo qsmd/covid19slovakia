@@ -97,15 +97,24 @@ export default class ChartConfig {
     if (this.isTests) {
       days = this._createTestsDays(timeline, days.length);
     }
+    const timelineType = util.getTimelineType(timeline);
 
     return {
       label: timeline.id,
       backgroundColor: color,
       borderColor: color,
       data: days,
-      yAxisID: 'left-y-axis',
+      yAxisID: timelineType === 'tests' ? `right-y-axis-${timeline}` : `left-y-axis-${timeline}`,
       fill: false,
     };
+  }
+
+  _createYAxes(timeline) {
+    const timelineType = util.getTimelineType(timeline);
+    if (timelineType === 'tests') {
+      return util.yAxeRight(`right-y-axis-${timeline}`, this.isDaily);
+    }
+    return util.yAxeLeft(`left-y-axis-${timeline}`, this.isDaily);
   }
 
   _disableUnchecked() {
@@ -138,9 +147,12 @@ export default class ChartConfig {
 
   createConfig() {
     const datasets = [];
-    this.countries.forEach((country) => {
-      if (this.defaults.includes(country.id)) {
-        datasets.push(this._createChartjsDataset(country));
+    const yAxes = [];
+
+    this.countries.forEach((timeline) => {
+      if (this.defaults.includes(timeline.id)) {
+        datasets.push(this._createChartjsDataset(timeline));
+        yAxes.push(this._createYAxes(timeline));
       }
     });
 
@@ -156,7 +168,10 @@ export default class ChartConfig {
         tooltips: { mode: 'index', intersect: false },
         hover: { mode: 'nearest', intersect: true },
         animation: { duration: 0 },
-        scales: { xAxes: [_X_AXE], yAxes: [util.yAxeLeft(this.isDaily), util.yAxeRight(this.isDaily)] },
+        scales: {
+          xAxes: [_X_AXE],
+          yAxes,
+        },
       },
     };
   }

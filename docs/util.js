@@ -19,9 +19,17 @@ export function isTest(country) {
   return country.id.includes('tests');
 }
 
-export function yAxeLeft(daily) {
+export function getTimelineType(timeline) {
+  const idParts = timeline.id.split('-');
+  if (idParts.length === 1) {
+    return 'cases';
+  }
+  return `${idParts[1]}`;
+}
+
+export function yAxeLeft(id, daily) {
   return {
-    id: 'left-y-axis',
+    id,
     display: true,
     position: 'left',
     scaleLabel: {
@@ -31,9 +39,9 @@ export function yAxeLeft(daily) {
   };
 }
 
-export function yAxeRight(daily) {
+export function yAxeRight(id, daily) {
   return {
-    id: 'right-y-axis',
+    id,
     display: true,
     position: 'right',
     scaleLabel: {
