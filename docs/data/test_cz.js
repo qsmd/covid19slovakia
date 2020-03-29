@@ -30,6 +30,7 @@ const CZ = {
     26698,
     31127,
     36374,
+    40700,
   ],
 };
 export default CZ;
