@@ -5,17 +5,6 @@ import * as util from './util.js'; // eslint-disable-line import/extensions
 
 const MINIMUM_CASES = 2;
 const SLOVAK_POPULATION = 5435343;
-const POPULATION = {
-  Austria: 8772865,
-  Czechia: 10578820,
-  Germany: 82521653,
-  Spain: 46528966,
-  Hungary: 9772756,
-  Italy: 60589445,
-  Poland: 37972964,
-  Slovakia: 5435343,
-  Norway: 5367580,
-};
 
 const _LEFT_Y = 'left-y-axis';
 const _RIGHT_Y = 'right-y-axis';
@@ -51,7 +40,7 @@ export default class ChartConfig {
   // 'private' methods
 
   _getValidDaysCount(timeline) {
-    const multiplier = SLOVAK_POPULATION / POPULATION[timeline.name];
+    const multiplier = SLOVAK_POPULATION / timeline.population;
     let invalidDaysCount = 0;
     const casesTimeline = this._getCountryById(timeline.id.split('-')[0]);
     casesTimeline.days.some((day) => {
@@ -66,7 +55,7 @@ export default class ChartConfig {
 
   _createNormalizedNoncaseDays(timeline, validDays) {
     const days = [];
-    const multiplier = SLOVAK_POPULATION / POPULATION[timeline.name];
+    const multiplier = SLOVAK_POPULATION / timeline.population;
     let yesterday = 0;
 
     timeline.days.slice(timeline.days.length - validDays).forEach((day) => {

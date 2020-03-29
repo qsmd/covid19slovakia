@@ -2,12 +2,17 @@ import csv
 
 TIMELINE_IDX = 4
 COUNTRIES = {
-    'Austria': 'at',
-    'Germany': 'de',
-    'Hungary': 'hu',
-    'Italy': 'it',
-    'Poland': 'pl',
-    'Spain': 'es',
+    'Austria': {'code': 'at', 'population': 8772865},
+    'Germany': {'code': 'de', 'population': 82521653},
+    'Hungary': {'code': 'hu', 'population': 9772756},
+    'Italy': {'code': 'it', 'population': 60589445},
+    'Korea, South': {'code': 'kr', 'population': 51709098},
+    'Norway': {'code': 'no', 'population': 5367580},
+    'Poland': {'code': 'pl', 'population': 37972964},
+    'Spain': {'code': 'es', 'population': 46528966},
+    'Sweden': {'code': 'se', 'population': 10333456},
+    'UK': {'code': 'uk', 'population': 67545757},
+    'US': {'code': 'us', 'population': 328239523},
 }
 
 def get_nonzero_idx(days):
@@ -35,7 +40,8 @@ def process_file():
                 header = row
             if row[0] == '' and row[1] in COUNTRIES:
                 idx, days = get_days(row)
-                print(f"  {{id:'{COUNTRIES[row[1]]}',name:'{row[1]}',first:'{date_sk(header[idx])}',days:[{','.join(days)}]}},")
+                country = COUNTRIES[row[1]]
+                print(f"  {{id:'{country['code']}',name:'{row[1]}',population:{country['population']},first:'{date_sk(header[idx])}',days:[{','.join(days)}]}},")
 
 print("import SK from './timeline_sk.js'; // eslint-disable-line import/extensions")
 print("import CZ from './timeline_cz.js'; // eslint-disable-line import/extensions")

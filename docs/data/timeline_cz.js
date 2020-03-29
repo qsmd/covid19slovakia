@@ -1,6 +1,7 @@
 const CZ = {
   id: 'cz',
   name: 'Czechia',
+  population: 10578820,
   first: '1.3.20',
   days: [
     3,

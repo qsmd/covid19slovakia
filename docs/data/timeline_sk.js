@@ -1,6 +1,7 @@
 const SK = {
   id: 'sk',
   name: 'Slovakia',
+  population: 5435343,
   first: '6.3.20',
   days: [
     1,
