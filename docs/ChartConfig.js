@@ -71,6 +71,25 @@ export default class ChartConfig {
     return days;
   }
 
+  static _createNormalizedGrowthDays(timeline, validDays) {
+    const result = [];
+    let yesterday = 0;
+
+    console.log(`### 111 ${timeline.id}, ${validDays}`);
+
+    timeline.days.slice(timeline.days.length - validDays).forEach((day) => {
+      if (yesterday !== 0) {
+        result.push((((day - yesterday) / yesterday) * 100).toFixed(2));
+        console.log(`### 222 (${day} - ${yesterday}) / ${yesterday} = ${day - yesterday} / ${yesterday} = ${(((day - yesterday) / yesterday) * 100).toFixed(2)}`);
+      }
+      yesterday = day;
+    });
+
+    console.log(`### 333 ${result}`);
+
+    return result;
+  }
+
   _createChartjsDataset(timeline) {
     let color = this.countryNameToColor[`${timeline.name}`];
     if (!color) {
@@ -81,8 +100,14 @@ export default class ChartConfig {
     if (isRightYAxis) {
       color = `${color}33`;
     }
+
     const validDays = this._getValidDaysCount(timeline);
-    const days = this._createNormalizedNoncaseDays(timeline, validDays);
+    let days = null;
+    if (this.canvasId.includes('growth')) {
+      days = ChartConfig._createNormalizedGrowthDays(timeline, validDays);
+    } else {
+      days = this._createNormalizedNoncaseDays(timeline, validDays);
+    }
 
     return {
       label: timeline.id,
