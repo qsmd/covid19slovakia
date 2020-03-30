@@ -2,9 +2,10 @@
 // TODO remove right chart labels if not used
 // TODO white background for downloaded chart
 
+/* eslint-disable import/extensions */
 // eslint-disable-next-line no-unused-vars
-import * as chartjs from './Chart.bundle.min.js'; // eslint-disable-line import/extensions
-import ChartConfig from './ChartConfig.js'; // eslint-disable-line import/extensions
+import * as chartjs from './Chart.bundle.min.js';
+import ChartConfig from './ChartConfig.js';
 
 window.onload = function () {
   ['total-cases', 'daily-cases', 'total-tests', 'daily-tests'].forEach((canvasId) => {

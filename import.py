@@ -43,10 +43,15 @@ def process_file():
                 country = COUNTRIES[row[1]]
                 print(f"  {{id:'{country['code']}',name:'{row[1]}',population:{country['population']},first:'{date_sk(header[idx])}',days:[{','.join(days)}]}},")
 
-print("import SK from './timeline_sk.js'; // eslint-disable-line import/extensions")
-print("import CZ from './timeline_cz.js'; // eslint-disable-line import/extensions")
-print()
+print('/* eslint-disable import/extensions */')
+print('/* eslint-disable key-spacing */')
 print('/* eslint-disable comma-spacing */')
+print('/* eslint-disable object-curly-newline */')
+print('/* eslint-disable object-curly-spacing */')
+print()
+print("import SK from './sk-cases.js';")
+print("import CZ from './cz-cases.js';")
+print()
 print('const COUNTRIES = [')
 print('  SK, CZ,')
 process_file()

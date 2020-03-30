@@ -1,7 +1,9 @@
+/* eslint-disable import/extensions */
 /* eslint-disable no-underscore-dangle */
-import CASES from './data/timelines.js'; // eslint-disable-line import/extensions
-import TESTS from './data/tests.js'; // eslint-disable-line import/extensions
-import * as util from './util.js'; // eslint-disable-line import/extensions
+
+import { CASES, DEFAULT_CASES } from './data/cases.js';
+import { TESTS, DEFAULT_TESTS } from './data/tests.js';
+import * as util from './util.js';
 
 const MINIMUM_CASES = 2;
 const SLOVAK_POPULATION = 5435343;
@@ -32,7 +34,7 @@ export default class ChartConfig {
     this.isDaily = this.canvasId.includes('daily');
     const useTestTimelines = this.canvasId.includes('tests');
     this.countries = useTestTimelines ? TESTS : CASES;
-    this.defaults = useTestTimelines ? util.DEFAULT_TESTS : util.DEFAULT_CASES;
+    this.defaults = useTestTimelines ? DEFAULT_TESTS : DEFAULT_CASES;
     this.checkboxes = [];
     this.countryNameToColor = {};
   }

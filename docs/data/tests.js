@@ -1,10 +1,10 @@
-import SK_TESTS from './test_sk.js'; // eslint-disable-line import/extensions
-import CZ_TESTS from './test_cz.js'; // eslint-disable-line import/extensions
-import SK_CASES from './timeline_sk.js'; // eslint-disable-line import/extensions
-import CZ_CASES from './timeline_cz.js'; // eslint-disable-line import/extensions
+import SK_TESTS from './sk-tests.js'; // eslint-disable-line import/extensions
+import CZ_TESTS from './cz-tests.js'; // eslint-disable-line import/extensions
+import SK_CASES from './sk-cases.js'; // eslint-disable-line import/extensions
+import CZ_CASES from './cz-cases.js'; // eslint-disable-line import/extensions
 
 /* eslint-disable comma-spacing */
-const TESTS = [
+export const TESTS = [
   SK_CASES, SK_TESTS, CZ_CASES, CZ_TESTS,
 ];
-export default TESTS;
+export const DEFAULT_TESTS = ['sk', 'sk-tests', 'cz', 'cz-tests'];
