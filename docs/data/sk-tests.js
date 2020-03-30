@@ -27,6 +27,7 @@ const SK = {
     5664,
     6411,
     7131,
+    7532,
   ],
 };
 export default SK;
