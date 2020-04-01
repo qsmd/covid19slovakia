@@ -32,7 +32,7 @@ export default class ChartConfig {
     ];
     this.canvasId = canvasId;
     this.isDaily = this.canvasId.includes('daily');
-    const useTestTimelines = this.canvasId.includes('tests');
+    const useTestTimelines = this.canvasId.includes('tests') || this.canvasId.includes('positives');
     this.countries = useTestTimelines ? TESTS : CASES;
     this.defaults = useTestTimelines ? DEFAULT_TESTS : DEFAULT_CASES;
     this.checkboxes = [];
@@ -71,7 +71,7 @@ export default class ChartConfig {
     return days;
   }
 
-  static _createNormalizedGrowthDays(timeline, validDays) {
+  static _createGrowthDays(timeline, validDays) {
     const result = [];
     let yesterday = 0;
 
@@ -90,6 +90,25 @@ export default class ChartConfig {
     return result;
   }
 
+  static _createPositivesDays(timeline, validDays) {
+    const result = [];
+    let yesterday = 0;
+
+    console.log(`>>> 111 ${timeline.id}, ${validDays}`);
+
+    timeline.days.slice(timeline.days.length - validDays).forEach((day) => {
+      if (yesterday !== 0) {
+        result.push((((day - yesterday) / yesterday) * 100).toFixed(2));
+        console.log(`>>> 222 (${day} - ${yesterday}) / ${yesterday} = ${day - yesterday} / ${yesterday} = ${(((day - yesterday) / yesterday) * 100).toFixed(2)}`);
+      }
+      yesterday = day;
+    });
+
+    console.log(`>>> 333 ${result}`);
+
+    return result;
+  }
+
   _createChartjsDataset(timeline) {
     let color = this.countryNameToColor[`${timeline.name}`];
     if (!color) {
@@ -104,7 +123,9 @@ export default class ChartConfig {
     const validDays = this._getValidDaysCount(timeline);
     let days = null;
     if (this.canvasId.includes('growth')) {
-      days = ChartConfig._createNormalizedGrowthDays(timeline, validDays);
+      days = ChartConfig._createGrowthDays(timeline, validDays);
+    } else if (this.canvasId.includes('positives')) {
+      days = [];
     } else {
       days = this._createNormalizedNoncaseDays(timeline, validDays);
     }
@@ -159,6 +180,9 @@ export default class ChartConfig {
 
     this.countries.forEach((timeline) => {
       if (this.defaults.includes(timeline.id)) {
+        if (this.canvasId.includes('positives')) {
+          
+        }
         datasets.push(this._createChartjsDataset(timeline));
         yAxes.push(this._createYAxes(timeline));
       }
