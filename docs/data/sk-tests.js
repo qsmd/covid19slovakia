@@ -30,6 +30,7 @@ const SK = {
     7532,
     8220,
     9097,
+    10288,
   ],
 };
 export default SK;
