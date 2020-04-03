@@ -108,7 +108,8 @@ export default class ChartConfig {
     return result;
   }
 
-  _createChartjsDataset(timeline, timeline2) {
+  // TODO: cleanup params usage - 2nd used only in ratio charts
+  _createChartjsDataset(timeline, timeline2 = undefined) {
     let color = this.countryNameToColor[`${timeline.name}`];
     if (!color) {
       color = this.colors.shift();
