@@ -72,54 +72,38 @@ export default class ChartConfig {
     return days;
   }
 
+  // TODO: unused
   static _createGrowthDays(timeline, validDays) {
     const result = [];
     let yesterday = 0;
-
-    console.log(`### 111 ${timeline.id}, ${validDays}`);
-
     timeline.days.slice(timeline.days.length - validDays).forEach((day) => {
       if (yesterday !== 0) {
         result.push((((day - yesterday) / yesterday) * 100).toFixed(2));
-        console.log(`### 222 (${day} - ${yesterday}) / ${yesterday} = ${day - yesterday} / ${yesterday} = ${(((day - yesterday) / yesterday) * 100).toFixed(2)}`);
       }
       yesterday = day;
     });
-
-    console.log(`### 333 ${result}`);
-
     return result;
   }
 
-  _createCaseRatioDays(timeline, timeline2, validDays) {
-    console.log(`>>> 000 ${this.isDaily} ${timeline.id}, ${timeline2.id}`);
-    
+  _createCaseRatioDays(timelineCases, timelineTests, validDays) {
     const result = [];
-    let yesterday = 0;
-    let yesterday2 = 0;
+    let yesterdayCases = 0;
+    let yesterdayTests = 0;
+    const daysCases = timelineCases.days.slice(timelineCases.days.length - validDays);
+    const daysTests = timelineTests.days.slice(timelineTests.days.length - validDays);
 
-    console.log(`>>> 111 ${timeline.id}, ${validDays}`);
-
-    const days = timeline.days.slice(timeline.days.length - validDays);
-    const days2 = timeline2.days.slice(timeline2.days.length - validDays);
-
-    console.log(`>>> 222 ${days}`);
-    console.log(`>>> 333 ${days2}`);
-
-    days.forEach((day, index) => {
-      if (yesterday !== 0) {
+    daysCases.forEach((dayCases, index) => {
+      const dayTests = daysTests[index];
+      if (yesterdayCases !== 0) {
         if (this.isDaily) {
-          result.push((((day - yesterday) / (days2[index] - yesterday2)) * 100).toFixed(2));
+          result.push((((dayCases - yesterdayCases) / (dayTests - yesterdayTests)) * 100).toFixed(2));
         } else {
-          result.push((((day) / (days2[index])) * 100).toFixed(2));
+          result.push((((dayCases) / (dayTests)) * 100).toFixed(2));
         }
-        // console.log(`>>> 444 ((${day} - ${yesterday}) / (${days2[index]} - ${yesterday2}))`);
       }
-      yesterday = day;
-      yesterday2 = days2[index];
+      yesterdayCases = dayCases;
+      yesterdayTests = daysTests[index];
     });
-
-    console.log(`>>> 555 ${result}`);
 
     return result;
   }
