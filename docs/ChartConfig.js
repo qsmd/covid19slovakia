@@ -91,8 +91,8 @@ export default class ChartConfig {
     return result;
   }
 
-  static _createCaseRatioDays(timeline, timeline2, validDays) {
-    console.log(`>>> 000 ${timeline.id}, ${timeline2.id}`);
+  _createCaseRatioDays(timeline, timeline2, validDays) {
+    console.log(`>>> 000 ${this.isDaily} ${timeline.id}, ${timeline2.id}`);
     
     const result = [];
     let yesterday = 0;
@@ -108,8 +108,12 @@ export default class ChartConfig {
 
     days.forEach((day, index) => {
       if (yesterday !== 0) {
-        result.push((((day - yesterday) / (days2[index] - yesterday2)) * 100).toFixed(2));
-        console.log(`>>> 444 ((${day} - ${yesterday}) / (${days2[index]} - ${yesterday2}))`);
+        if (this.isDaily) {
+          result.push((((day - yesterday) / (days2[index] - yesterday2)) * 100).toFixed(2));
+        } else {
+          result.push((((day) / (days2[index])) * 100).toFixed(2));
+        }
+        // console.log(`>>> 444 ((${day} - ${yesterday}) / (${days2[index]} - ${yesterday2}))`);
       }
       yesterday = day;
       yesterday2 = days2[index];
@@ -136,7 +140,7 @@ export default class ChartConfig {
     if (this.canvasId.includes('growth')) {
       days = ChartConfig._createGrowthDays(timeline, validDays);
     } else if (this.canvasId.includes(CASE_RATIO)) {
-      days = ChartConfig._createCaseRatioDays(timeline, timeline2, validDays);
+      days = this._createCaseRatioDays(timeline, timeline2, validDays);
     } else {
       days = this._createNormalizedNoncaseDays(timeline, validDays);
     }
