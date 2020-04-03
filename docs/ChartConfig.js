@@ -90,26 +90,34 @@ export default class ChartConfig {
     return result;
   }
 
-  static _createPositivesDays(timeline, validDays) {
+  static _createPositivesDays(timeline, timeline2, validDays) {
+    console.log(`>>> 000 ${timeline.id}, ${timeline2.id}`);
+    
     const result = [];
     let yesterday = 0;
 
     console.log(`>>> 111 ${timeline.id}, ${validDays}`);
 
-    timeline.days.slice(timeline.days.length - validDays).forEach((day) => {
+    const days = timeline.days.slice(timeline.days.length - validDays);
+    const days2 = timeline2.days.slice(timeline2.days.length - validDays);
+
+    console.log(`>>> 222 ${days}`);
+    console.log(`>>> 333 ${days2}`);
+
+    days.forEach((day, index) => {
       if (yesterday !== 0) {
-        result.push((((day - yesterday) / yesterday) * 100).toFixed(2));
-        console.log(`>>> 222 (${day} - ${yesterday}) / ${yesterday} = ${day - yesterday} / ${yesterday} = ${(((day - yesterday) / yesterday) * 100).toFixed(2)}`);
+        result.push(((day / days2[index]) * 100).toFixed(2));
+        console.log(`>>> 444 ${day} / ${days2[index]}`);
       }
       yesterday = day;
     });
 
-    console.log(`>>> 333 ${result}`);
+    console.log(`>>> 555 ${result}`);
 
     return result;
   }
 
-  _createChartjsDataset(timeline) {
+  _createChartjsDataset(timeline, timeline2) {
     let color = this.countryNameToColor[`${timeline.name}`];
     if (!color) {
       color = this.colors.shift();
@@ -125,7 +133,7 @@ export default class ChartConfig {
     if (this.canvasId.includes('growth')) {
       days = ChartConfig._createGrowthDays(timeline, validDays);
     } else if (this.canvasId.includes('positives')) {
-      days = [];
+      days = ChartConfig._createPositivesDays(timeline, timeline2, validDays);
     } else {
       days = this._createNormalizedNoncaseDays(timeline, validDays);
     }
@@ -178,15 +186,30 @@ export default class ChartConfig {
     const datasets = [];
     const yAxes = [];
 
-    this.countries.forEach((timeline) => {
-      if (this.defaults.includes(timeline.id)) {
-        if (this.canvasId.includes('positives')) {
-          
+    if (this.canvasId.includes('positives')) {
+      const tests = {};
+      // collect tests timelines
+      this.countries.forEach((timeline) => {
+        if (this.defaults.includes(timeline.id)) {
+          if (timeline.id.includes('tests')) {
+            tests[timeline.id.split('-')[0]] = timeline;
+          }
         }
-        datasets.push(this._createChartjsDataset(timeline));
-        yAxes.push(this._createYAxes(timeline));
-      }
-    });
+      });
+      this.countries.forEach((timeline) => {
+        if (this.defaults.includes(timeline.id) && !timeline.id.includes('tests')) {
+          datasets.push(this._createChartjsDataset(timeline, tests[timeline.id]));
+          yAxes.push(this._createYAxes(timeline));
+        }
+      });
+    } else {
+      this.countries.forEach((timeline) => {
+        if (this.defaults.includes(timeline.id)) {
+          datasets.push(this._createChartjsDataset(timeline));
+          yAxes.push(this._createYAxes(timeline));
+        }
+      });
+    }
 
     return {
       type: 'line',
