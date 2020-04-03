@@ -191,7 +191,7 @@ export default class ChartConfig {
       this.countries.forEach((timeline) => {
         if (this.defaults.includes(timeline.id) && !timeline.id.includes('tests')) {
           datasets.push(this._createChartjsDataset(timeline, tests[timeline.id]));
-          yAxes.push(this._createYAxes(timeline, 'počet pozitívnych prípadov / počet testov'));
+          yAxes.push(this._createYAxes(timeline, 'pomer (%) pozitívnych prípadov / počet testov'));
         }
       });
     } else {
