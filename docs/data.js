@@ -8,8 +8,7 @@ import * as chartjs from './Chart.bundle.min.js';
 import ChartConfig from './ChartConfig.js';
 
 window.onload = function () {
-  // ['total-cases', 'daily-cases', 'total-tests', 'daily-tests'].forEach((canvasId) => {
-  ['total-positives'].forEach((canvasId) => {
+  ['total-cases', 'daily-cases', 'total-tests', 'daily-tests', 'daily-caseratio'].forEach((canvasId) => {
     const chartConfig = new ChartConfig(canvasId);
     const chart = new Chart(document.getElementById(`canvas-${canvasId}`).getContext('2d'), chartConfig.createConfig());
     document.getElementById(`config-${canvasId}`).addEventListener('click', () => { chartConfig.collapseClick(); });

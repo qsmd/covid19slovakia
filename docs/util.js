@@ -13,14 +13,14 @@ export function isRightYAxis(timeline) {
   return timeline.id.includes('tests');
 }
 
-export function yAxeLeft(id, daily) {
+export function yAxeLeft(id, daily, text = 'počet prípadov / počet obyvateľov Slovenska') {
   return {
     id,
     display: true,
     position: 'left',
     scaleLabel: {
       display: true,
-      labelString: `${(daily ? 'Denný' : 'Celkový')} počet prípadov / počet obyvateľov Slovenska`,
+      labelString: `${(daily ? 'Denný' : 'Celkový')} ${text}`,
     },
   };
 }
