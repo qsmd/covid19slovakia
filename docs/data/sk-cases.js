@@ -32,6 +32,7 @@ const SK = {
     400,
     426,
     450,
+    471,
   ],
 };
 export default SK;
