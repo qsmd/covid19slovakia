@@ -1,7 +1,7 @@
 /* eslint-disable import/extensions */
 /* eslint-disable no-underscore-dangle */
 
-import { CASES, DEFAULT_CASES } from './data/cases.js';
+import { CASES, DEFAULT_CASES, CASES_ACTIVE } from './data/cases.js';
 import { TESTS, DEFAULT_TESTS } from './data/tests.js';
 import * as util from './util.js';
 
@@ -34,7 +34,8 @@ export default class ChartConfig {
     this.canvasId = canvasId;
     this.isDaily = this.canvasId.includes('daily');
     const useTestTimelines = this.canvasId.includes('tests') || this.canvasId.includes(CASE_RATIO);
-    this.countries = useTestTimelines ? TESTS : CASES;
+    const useActiveTimelines = this.canvasId.includes('active');
+    this.countries = useTestTimelines ? TESTS : (useActiveTimelines ? CASES_ACTIVE : CASES);
     this.defaults = useTestTimelines ? DEFAULT_TESTS : DEFAULT_CASES;
     this.checkboxes = [];
     this.countryNameToColor = {};
