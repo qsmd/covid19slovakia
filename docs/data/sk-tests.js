@@ -38,6 +38,7 @@ const SK = {
     17639,
     19681,
     21371,
+    23672,
   ],
 };
 export default SK;
