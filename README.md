@@ -2,4 +2,15 @@ Comparison of COVID-19 in Slovakia and other countries relative to size of Slova
 
 ![Sample chart](docs/screenshot.png)
 
-Disclaimer: This code is far from perfect. First version done by dad in quarantine, who wanted to learn JS  ¯\\\_(ツ)\_/¯.
+Note: this repo contains submodule for data import. After cloning, run:  
+
+```
+git submodule init
+git submodule update
+```
+
+To import data from submodule run:  
+
+```
+python import.py > docs/data/cases.js 
+```

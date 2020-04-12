@@ -32,7 +32,7 @@ def date_sk(date):
     return f'{a[1]}.{a[0]}.{a[2]}'
 
 def process_file():
-    with open('time_series_covid19_confirmed_global.csv') as f:
+    with open('CSSEGISandData/COVID-19/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv') as f:
         header = None
         rows = csv.reader(f)
         for row in rows:
