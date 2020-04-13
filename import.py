@@ -42,7 +42,7 @@ class Country:
         self.row = row
 
 def read_csv_file(filename):
-    with open('CSSEGISandData/COVID-19/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv') as f:
+    with open(f'CSSEGISandData/COVID-19/csse_covid_19_data/csse_covid_19_time_series/{filename}') as f:
         result = {}
         header = None
         rows = csv.reader(f)
