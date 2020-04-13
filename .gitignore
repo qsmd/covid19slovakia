@@ -1,5 +1,2 @@
 .DS_Store
-time_series_covid19_confirmed_global.csv
 node_modules
-time_series_covid19_deaths_global.csv
-time_series_covid19_recovered_global.csv
