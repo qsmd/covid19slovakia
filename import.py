@@ -17,15 +17,23 @@ COUNTRIES = {
     'US': {'code': 'us', 'population': 328239523},
 }
 
-def get_nonzero_idx(days):
-    for index, day in enumerate(days[TIMELINE_IDX:]):
-        if eval(day) > 0:
-            return TIMELINE_IDX + index
+class Country:
+    def __init__(self, id, name, population, header, csv_row):
+        self.id = id
+        self.name = name
+        self.population = population
+        self.header = header
+        self.csv_row = csv_row
 
-def get_days(days):
-    nonzero_idx = get_nonzero_idx(days)
+def get_first_nonzero_column(csv_row, meta_columns_to_skip):
+    for index, day in enumerate(csv_row[meta_columns_to_skip:]):
+        if eval(day) > 0:
+            return meta_columns_to_skip + index
+
+def get_days(csv_row):
+    nonzero_idx = get_first_nonzero_column(csv_row, TIMELINE_IDX)
     nonzero_days = []
-    for day in days[nonzero_idx:]:
+    for day in csv_row[nonzero_idx:]:
         nonzero_days.append(day)
     return nonzero_idx, nonzero_days
 
@@ -33,33 +41,25 @@ def date_sk(date):
     a = date.split('/')
     return f'{a[1]}.{a[0]}.{a[2]}'
 
-class Country:
-    def __init__(self, id, name, population, header, row):
-        self.id = id
-        self.name = name
-        self.population = population
-        self.header = header
-        self.row = row
-
-def read_csv_file(filename):
+def csv_to_countries(filename):
     with open(f'CSSEGISandData/COVID-19/csse_covid_19_data/csse_covid_19_time_series/{filename}') as f:
         result = {}
         header = None
-        rows = csv.reader(f)
-        for row in rows:
+        csv_rows = csv.reader(f)
+        for csv_row in csv_rows:
             if header is None:
-                header = row
-            if row[0] == '' and row[1] in COUNTRIES:
-                country = COUNTRIES[row[1]]
-                item = Country(country['code'], row[1], country['population'], header, row)
+                header = csv_row
+            if csv_row[0] == '' and csv_row[1] in COUNTRIES:
+                country = COUNTRIES[csv_row[1]]
+                item = Country(country['code'], csv_row[1], country['population'], header, csv_row)
                 result[item.id] = item
         return result
 
-def output_countries(countries, omitids):
+def print_countries(countries, omit_ids):
     for id in countries:
         country = countries[id]
-        if (country.id not in omitids):
-            idx, days = get_days(country.row)
+        if (country.id not in omit_ids):
+            idx, days = get_days(country.csv_row)
             print(f"  {{id:'{country.id}',name:'{country.name}',population:{country.population},first:'{date_sk(country.header[idx])}',days:[{','.join(days)}]}},")
 
 def calculate_active(countries_confirmed, countries_deaths, countries_recovered):
@@ -69,18 +69,18 @@ def calculate_active(countries_confirmed, countries_deaths, countries_recovered)
         country_deaths = countries_deaths[id]
         country_recovered = countries_recovered[id]
         row_active = []
-        for index in range(len(country_confirmed.row)):
+        for index in range(len(country_confirmed.csv_row)):
             if (index < 4):
-                row_active.append(country_confirmed.row[index])
+                row_active.append(country_confirmed.csv_row[index])
             else:
-                row_active.append(str(int(country_confirmed.row[index]) - int(country_deaths.row[index]) - int(country_recovered.row[index])))
+                row_active.append(str(int(country_confirmed.csv_row[index]) - int(country_deaths.csv_row[index]) - int(country_recovered.csv_row[index])))
         item = Country(country_confirmed.id, country_confirmed.name, country_confirmed.population, country_confirmed.header, row_active)
         result[item.id] = item
     return result
 
-countries_confirmed = read_csv_file('time_series_covid19_confirmed_global.csv')
-countries_deaths = read_csv_file('time_series_covid19_deaths_global.csv')
-countries_recovered = read_csv_file('time_series_covid19_recovered_global.csv')
+countries_confirmed = csv_to_countries('time_series_covid19_confirmed_global.csv')
+countries_deaths = csv_to_countries('time_series_covid19_deaths_global.csv')
+countries_recovered = csv_to_countries('time_series_covid19_recovered_global.csv')
 countries_active = calculate_active(countries_confirmed, countries_deaths, countries_recovered)
 
 print('/* eslint-disable import/extensions */')
@@ -94,10 +94,10 @@ print("import CZ from './cz-cases.js';")
 print()
 print('export const CASES = [')
 print('  SK, CZ,')
-output_countries(countries_confirmed, ['sk','cz'])
+print_countries(countries_confirmed, ['sk','cz'])
 print('];')
 print("export const DEFAULT_CASES = ['sk', 'cz', 'at', 'hu', 'pl'];")
 print()
 print('export const CASES_ACTIVE = [')
-output_countries(countries_active, [])
+print_countries(countries_active, [])
 print('];')
