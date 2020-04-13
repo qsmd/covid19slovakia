@@ -33,15 +33,30 @@ export default class ChartConfig {
     ];
     this.canvasId = canvasId;
     this.isDaily = this.canvasId.includes('daily');
-    const useTestTimelines = this.canvasId.includes('tests') || this.canvasId.includes(CASE_RATIO);
-    const useActiveTimelines = this.canvasId.includes('active');
-    this.countries = useTestTimelines ? TESTS : (useActiveTimelines ? CASES_ACTIVE : CASES);
-    this.defaults = useTestTimelines ? DEFAULT_TESTS : DEFAULT_CASES;
+    this.countries = ChartConfig._getTimelines(this.canvasId)
+    this.defaults = ChartConfig._getDefaults(this.canvasId)
     this.checkboxes = [];
     this.countryNameToColor = {};
   }
 
   // 'private' methods
+
+  static _getTimelines(canvasId) {
+    if (canvasId.includes('active')) {
+      return CASES_ACTIVE;
+    }
+    if (canvasId.includes('tests') || canvasId.includes(CASE_RATIO)) {
+      return TESTS;
+    }
+    return CASES;
+  }
+
+  static _getDefaults(canvasId) {
+    if (canvasId.includes('tests') || canvasId.includes(CASE_RATIO)) {
+      return DEFAULT_TESTS;
+    }
+    return DEFAULT_CASES;
+  }
 
   _getValidDaysCount(timeline) {
     const multiplier = SLOVAK_POPULATION / timeline.population;
