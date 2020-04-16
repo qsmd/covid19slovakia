@@ -49,6 +49,7 @@ const CZ = {
     5991,
     6059,
     6141,
+    6301,
   ],
 };
 export default CZ;
