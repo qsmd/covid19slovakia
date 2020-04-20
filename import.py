@@ -55,12 +55,11 @@ def csv_to_countries(filename):
                 result[item.id] = item
         return result
 
-def print_countries(countries, omit_ids):
+def print_countries(countries):
     for id in countries:
         country = countries[id]
-        if (country.id not in omit_ids):
-            idx, days = get_days(country.csv_row)
-            print(f"  {{id:'{country.id}',name:'{country.name}',population:{country.population},first:'{date_sk(country.header[idx])}',days:[{','.join(days)}]}},")
+        idx, days = get_days(country.csv_row)
+        print(f"  {{id:'{country.id}',name:'{country.name}',population:{country.population},first:'{date_sk(country.header[idx])}',days:[{','.join(days)}]}},")
 
 def calculate_active(countries_confirmed, countries_deaths, countries_recovered):
     result = { }
@@ -89,15 +88,12 @@ print('/* eslint-disable comma-spacing */')
 print('/* eslint-disable object-curly-newline */')
 print('/* eslint-disable object-curly-spacing */')
 print()
-print("import SK from './sk-cases.js';")
-print("import CZ from './cz-cases.js';")
-print()
 print('export const CASES = [')
-print('  SK, CZ,')
-print_countries(countries_confirmed, ['sk','cz'])
+print_countries(countries_confirmed)
 print('];')
-print("export const DEFAULT_CASES = ['sk', 'cz', 'at', 'hu', 'pl'];")
 print()
 print('export const CASES_ACTIVE = [')
-print_countries(countries_active, [])
+print_countries(countries_active)
 print('];')
+print()
+print("export const DEFAULT_CASES = ['sk', 'cz', 'at'];")

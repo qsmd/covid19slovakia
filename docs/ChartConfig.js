@@ -2,20 +2,17 @@
 /* eslint-disable no-underscore-dangle */
 
 import { CASES, DEFAULT_CASES, CASES_ACTIVE } from './data/cases.js';
-import { TESTS, DEFAULT_TESTS } from './data/tests.js';
 import * as util from './util.js';
 
-const MINIMUM_CASES = 2;
-const SLOVAK_POPULATION = 5435343;
-const CASE_RATIO = 'caseratio';
+const MINIMUM_CASES = 1;
+const SLOVAK_POPULATION = 1000000;
 
 const _LEFT_Y = 'left-y-axis';
-const _RIGHT_Y = 'right-y-axis';
 const _X_AXE = {
   display: true,
   scaleLabel: {
     display: true,
-    labelString: 'Dni od 2 prípadov / počet obyvateľov Slovenska)',
+    labelString: 'Days since first case per million people',
   },
 };
 
@@ -33,30 +30,13 @@ export default class ChartConfig {
     ];
     this.canvasId = canvasId;
     this.isDaily = this.canvasId.includes('daily');
-    this.countries = ChartConfig._getTimelines(this.canvasId)
-    this.defaults = ChartConfig._getDefaults(this.canvasId)
+    this.countries = canvasId.includes('active') ? CASES_ACTIVE : CASES;
+    this.defaults = DEFAULT_CASES;
     this.checkboxes = [];
     this.countryNameToColor = {};
   }
 
   // 'private' methods
-
-  static _getTimelines(canvasId) {
-    if (canvasId.includes('active')) {
-      return CASES_ACTIVE;
-    }
-    if (canvasId.includes('tests') || canvasId.includes(CASE_RATIO)) {
-      return TESTS;
-    }
-    return CASES;
-  }
-
-  static _getDefaults(canvasId) {
-    if (canvasId.includes('tests') || canvasId.includes(CASE_RATIO)) {
-      return DEFAULT_TESTS;
-    }
-    return DEFAULT_CASES;
-  }
 
   _getValidDaysCount(timeline) {
     const multiplier = SLOVAK_POPULATION / timeline.population;
@@ -88,78 +68,23 @@ export default class ChartConfig {
     return days;
   }
 
-  // TODO: unused
-  static _createGrowthDays(timeline, validDays) {
-    const result = [];
-    let yesterday = 0;
-    timeline.days.slice(timeline.days.length - validDays).forEach((day) => {
-      if (yesterday !== 0) {
-        result.push((((day - yesterday) / yesterday) * 100).toFixed(2));
-      }
-      yesterday = day;
-    });
-    return result;
-  }
-
-  _createCaseRatioDays(timelineCases, timelineTests, validDays) {
-    const result = [];
-    let yesterdayCases = 0;
-    let yesterdayTests = 0;
-    const daysCases = timelineCases.days.slice(timelineCases.days.length - validDays);
-    const daysTests = timelineTests.days.slice(timelineTests.days.length - validDays);
-
-    daysCases.forEach((dayCases, index) => {
-      const dayTests = daysTests[index];
-      if (yesterdayCases !== 0) {
-        if (this.isDaily) {
-          result.push((((dayCases - yesterdayCases) / (dayTests - yesterdayTests)) * 100).toFixed(2));
-        } else {
-          result.push((((dayCases) / (dayTests)) * 100).toFixed(2));
-        }
-      }
-      yesterdayCases = dayCases;
-      yesterdayTests = daysTests[index];
-    });
-
-    return result;
-  }
-
-  // TODO: cleanup params usage - 2nd used only in ratio charts
-  _createChartjsDataset(timeline, timeline2 = undefined) {
+  _createChartjsDataset(timeline) {
     let color = this.countryNameToColor[`${timeline.name}`];
     if (!color) {
       color = this.colors.shift();
       this.countryNameToColor[`${timeline.name}`] = color;
     }
-    const isRightYAxis = util.isRightYAxis(timeline);
-    if (isRightYAxis) {
-      color = `${color}33`;
-    }
-
     const validDays = this._getValidDaysCount(timeline);
-    let days = null;
-    if (this.canvasId.includes('growth')) {
-      days = ChartConfig._createGrowthDays(timeline, validDays);
-    } else if (this.canvasId.includes(CASE_RATIO)) {
-      days = this._createCaseRatioDays(timeline, timeline2, validDays);
-    } else {
-      days = this._createNormalizedNoncaseDays(timeline, validDays);
-    }
+    const days = this._createNormalizedNoncaseDays(timeline, validDays);
 
     return {
       label: timeline.id,
       backgroundColor: color,
       borderColor: color,
       data: days,
-      yAxisID: isRightYAxis ? _RIGHT_Y : _LEFT_Y,
+      yAxisID: _LEFT_Y,
       fill: false,
     };
-  }
-
-  _createYAxes(timeline, text) {
-    return util.isRightYAxis(timeline)
-      ? util.yAxeRight(_RIGHT_Y, this.isDaily)
-      : util.yAxeLeft(_LEFT_Y, this.isDaily, text);
   }
 
   _disableUnchecked() {
@@ -194,30 +119,12 @@ export default class ChartConfig {
     const datasets = [];
     const yAxes = [];
 
-    if (this.canvasId.includes(CASE_RATIO)) {
-      const tests = {};
-      // collect tests timelines
-      this.countries.forEach((timeline) => {
-        if (this.defaults.includes(timeline.id)) {
-          if (timeline.id.includes('tests')) {
-            tests[timeline.id.split('-')[0]] = timeline;
-          }
-        }
-      });
-      this.countries.forEach((timeline) => {
-        if (this.defaults.includes(timeline.id) && !timeline.id.includes('tests')) {
-          datasets.push(this._createChartjsDataset(timeline, tests[timeline.id]));
-          yAxes.push(this._createYAxes(timeline, 'pomer (%) pozitívnych prípadov / počet testov'));
-        }
-      });
-    } else {
-      this.countries.forEach((timeline) => {
-        if (this.defaults.includes(timeline.id)) {
-          datasets.push(this._createChartjsDataset(timeline));
-          yAxes.push(this._createYAxes(timeline));
-        }
-      });
-    }
+    this.countries.forEach((timeline) => {
+      if (this.defaults.includes(timeline.id)) {
+        datasets.push(this._createChartjsDataset(timeline));
+        yAxes.push(util.yAxeLeft(_LEFT_Y, this.isDaily));
+      }
+    });
 
     return {
       type: 'line',
